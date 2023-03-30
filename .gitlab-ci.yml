@@ -1,0 +1,18 @@
+image: gcc
+
+stages:
+ - test
+
+test:
+ stage: test
+ only:
+   changes:
+   - "*.c"
+ script:
+    - info=$(pwd)
+    - info=(${info//\//\ })
+    - s=${info[5]}@${info[6]}@${info[7]}.todo
+    - touch $s
+    - cp $s $SUBMISSIONS_DIR/.
+ after_script:
+    - ls | grep -xv *.yml | xargs rm -rf
