@@ -147,7 +147,7 @@ int parser(char line[], char ***arguments, int max_arguments) {
     int space = FALSE, quotation = FALSE, arg_number = 0, j = 0;
     *arguments = malloc(max_arguments*sizeof(char*));
     for (i = 0; i < max_arguments; i++) {
-        (*arguments)[i] = malloc(BUF*sizeof(char));
+        (*arguments)[i] = malloc(BUFFER*sizeof(char));
     }
 
     if (line[0] == '\n') {
@@ -335,7 +335,8 @@ int command_l(char line[], Route **routes, Stop *stops,
 ------------------------------------------------------------------------------*/
 void command_i(Stop **stops, Route *routes, Connection *connections,
                int stop_num, int route_num) {
-
+    
+    /*está todo fodido, tenho de reescrever*/
     int i, j, k, pos = 0;
 
     for (i = 0; i < stop_num; i++) {
@@ -346,16 +347,22 @@ void command_i(Stop **stops, Route *routes, Connection *connections,
 
             for (j = 0; j < route_num; j++) {
                 k = routes[j].start_index; /*to get first connection*/
-                pos = check_first_and_last((*stops)[i], routes[j], j, 
-                                            list_of_routes, pos);
-                while (k != routes[j].end_index) { /*until the last one*/
-                    if (strcmp((*stops)[i].name, \
-                        connections[k].final_stop) == EQUAL) {
-                            list_of_routes[pos] = j;
-                            pos++;
+                if (routes[j].start_index == NO_ROUTE)
+                    continue;
+                else {
+                    pos = check_first_and_last((*stops)[i], routes[j], j, 
+                                                list_of_routes, pos);
+                    while (k != routes[j].end_index) { /*until the last one*/
+                        if (connections[k].ended == TRUE)
                             break;
+                        if (strcmp((*stops)[i].name, \
+                            connections[k].final_stop) == EQUAL) {
+                                list_of_routes[pos] = j;
+                                pos++;
+                                break;
+                        }
+                        k = connections[k].next_index; /*to get next connection*/
                     }
-                    k = connections[k].next_index; /*to get next connection*/
                 }
             }
             bubble_sort(routes, list_of_routes, pos);
