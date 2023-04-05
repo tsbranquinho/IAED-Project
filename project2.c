@@ -339,6 +339,7 @@ void command_r(char line[], Route **routes,
     }
     if (!exists) {
         printf("%s: no such line.\n", arguments[0]);
+        free_arguments(arguments, arg_number);
         return;
     }
     for (i = route_index; i < *route_num-1; i++) {
@@ -363,7 +364,6 @@ void command_r(char line[], Route **routes,
         if (strcmp((*connections)[i].route_name, arguments[0]) == EQUAL) {
             free((*connections)[i].route_name);
         }
-    }
     }
     free_arguments(arguments, arg_number);
 }
