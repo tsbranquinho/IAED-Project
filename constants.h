@@ -16,7 +16,7 @@
 #define INVERSO "inverso" /*the word inverso*/
 
 typedef struct { /*struct of routes*/
-    char name[ROUTE_NAME_LENGTH];
+    char *name;
     char first_stop[STOP_NAME_LENGTH];
     char last_stop[STOP_NAME_LENGTH];
     int start_index;
@@ -27,14 +27,14 @@ typedef struct { /*struct of routes*/
 } Route;
 
 typedef struct { /*struct of stops*/
-    char name[STOP_NAME_LENGTH];
+    char *name;
     double latitude;
     double longitude;
     int routes_passing;
 } Stop;
 
 typedef struct { /*struct of connections*/
-    char route_name[ROUTE_NAME_LENGTH];
+    int route_index;
     char initial_stop[STOP_NAME_LENGTH];
     char final_stop[STOP_NAME_LENGTH];
     int next_index;
