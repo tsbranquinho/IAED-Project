@@ -147,7 +147,7 @@ int parser(char line[], char ***arguments, int max_arguments) {
     int space = FALSE, quotation = FALSE, arg_number = 0, j = 0;
     *arguments = malloc(max_arguments*sizeof(char*));
     for (i = 0; i < max_arguments; i++) {
-        (*arguments)[i] = malloc(BUFFER*sizeof(char));
+        (*arguments)[i] = malloc(BUF*sizeof(char));
     }
 
     if (line[0] == '\n') {
@@ -769,7 +769,9 @@ void change_route_information(char **args, Route **routes,
         (*routes)[i].end_index = connection_num; /*update route's end*/
 
         for (j = connection_num-1; j >= 0; j--) {
-            if (strcmp((*connections)[j].final_stop, 
+            if ((*connections)[j].ended == TRUE)
+                continue;
+            else if (strcmp((*connections)[j].final_stop, 
             args[1]) == EQUAL) {
                 /* when we find the last connection, we update the index to 
                 the new one, and the new one we create the index to the 
@@ -786,7 +788,9 @@ void change_route_information(char **args, Route **routes,
         strcpy((*routes)[i].first_stop, args[1]);
         (*routes)[i].start_index = connection_num;
         for (j = connection_num-1; j >= 0; j--) {
-            if (strcmp((*connections)[j].initial_stop, 
+            if ((*connections)[j].ended == TRUE)
+                continue;
+            else if (strcmp((*connections)[j].initial_stop, 
             args[2]) == EQUAL) {
                 /*the opposite to the add to end case*/
                 (*connections)[j].prev_index = connection_num;
