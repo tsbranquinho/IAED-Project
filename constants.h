@@ -1,24 +1,24 @@
 #ifndef constants
 #define constants
 
+#define END -2
 #define NO_ROUTE -1 /*just to check if there's a route                        */
+#define ERROR -1 /*just to check if there's an error                          */
 #define FALSE 0 /*boolean value: false                                        */
 #define EQUAL 0 /*when two strings are the same                               */
 #define TRUE 1 /*boolean value: true                                          */
 #define INV_LEN 3 /*length of the abbreviation inv                            */
 #define INVERSO_LEN 7 /*length of the word inverso                            */
-#define ROUTE_NAME_LENGTH 21 /*maximum length of a route's name               */
-#define STOP_NAME_LENGTH 51 /*maximum length of a stop's name                 */
-#define MAX_ROUTES 200 /*maximum number of routes                             */
-#define BUFFER 65535 /*maximum number of characters in a line                  */
-#define MAX_STOPS 10000 /*maximum number of stops                             */
-#define MAX_CONNECTIONS 30000 /*maximum number of connections                 */
+#define ROUTE_INCREMENT 500 /*increment of the allocs for routes              */
+#define STOP_INCREMENT 1000 /*increment of the allocs for stops               */
+#define CONNECTION_INCREMENT 1000 /*increment of the allocs for connections        */
+#define BUFFER 65535 /*maximum number of characters in a line                 */
 #define INVERSO "inverso" /*the word inverso*/
 
 typedef struct { /*struct of routes*/
     char *name;
-    char first_stop[STOP_NAME_LENGTH];
-    char last_stop[STOP_NAME_LENGTH];
+    char *first_stop;
+    char *last_stop;
     int start_index;
     int end_index;
     double cost;
@@ -35,10 +35,11 @@ typedef struct { /*struct of stops*/
 
 typedef struct { /*struct of connections*/
     char *route_name;
-    char initial_stop[STOP_NAME_LENGTH];
-    char final_stop[STOP_NAME_LENGTH];
+    char *initial_stop;
+    char *final_stop;
     int next_index;
     int prev_index;
+    int ended;
     double cost;
     double duration;
 } Connection;
