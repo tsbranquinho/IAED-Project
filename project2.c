@@ -16,59 +16,94 @@
 /*-------------------------------MAIN FUNCTION--------------------------------*/
 int main() {
 
-    char c, line[BUFFER];
     int route_num = 0;
     int stop_num = 0;
     int connection_num = 0;
-    Route routes[MAX_ROUTES];
-    Stop stops[MAX_STOPS];
-    Connection connections[MAX_CONNECTIONS];
+    Route routes = {0};
+    Stop stops = {0};
+    Connection connections = {0};
 
-    while ((c = getchar()) != EOF) {
+    /*while ((c = getchar()) != EOF) {
         int end;
         if (fgets(line, BUFFER, stdin) == NULL) {
             return 0;
         }
-        end = handle_command(line, c, stops, routes, connections, &route_num, 
+        end = handle_command(line, c, &stops, &routes, &connections, &route_num, 
                              &stop_num, &connection_num);
-        if (!end) 
+        if (!end) {
+            free_memory(stops, routes, connections);
             break;
+        }
     }
+    */
+    handle_commands(&stops, &routes, &connections, &route_num, 
+                    &stop_num, &connection_num);
     return 0;
 }
 
+void free_memory(Stop *stops, Route *routes, Connection *connections, 
+                 int *stop_num, int *route_num, int *connection_num) {
+
+    int i;
+    if (*stop_num > 0) {
+        for (i = 0; i < *stop_num; i++)
+            free(stops[i].name);
+        free(stops);
+    }
+    if (*route_num > 0) {
+        for (i = 0; i < *route_num; i++)
+            free(routes[i].name);
+        free(routes);
+    }
+    if (*connection_num > 0) {
+        free(connections);
+    }
+    *stop_num = 0;
+    *route_num = 0;
+    *connection_num = 0;
+}
 /*------------------------------------------------------------------------------
  * Function: handle_command
  * Description: brief function that handles the command the user inputs
  * Output: returns FALSE if user terminates the program, TRUE otherwise
 ------------------------------------------------------------------------------*/
-int handle_command(char line[], char command, Stop stops[], 
-                   Route routes[], Connection connections[], int *route_num,
+void handle_commands(Stop *stops, 
+                   Route *routes, Connection *connections, int *route_num,
                    int *stop_num, int *connection_num) {
 
     int *ptr_route = route_num;
     int *ptr_stop = stop_num;
     int *ptr_connection = connection_num;
-
-    switch(command) {
+    char c, line[BUFFER];
+    while ((c = getchar()) != EOF) {
+        if (fgets(line, BUFFER, stdin) == NULL) {
+            return;
+        }
+        switch(c) {
             case 'q':
-                return FALSE;
+                free_memory(stops, routes, connections, ptr_stop, ptr_route, 
+                            ptr_connection);
+                return;
             case 'c':
-                command_c(line, routes, connections, ptr_route);
+                command_c(line, &routes, connections, ptr_route);
                 break;
             case 'p':
-                command_p(line, stops, connections, routes, 
+                command_p(line, &stops, connections, routes, 
                           ptr_stop, *route_num);
                 break;
             case 'l':
-                command_l(line, routes, stops, connections, ptr_connection,
+                command_l(line, &routes, stops, &connections, ptr_connection,
                           *route_num, *stop_num);
                 break;
             case 'i':
-                command_i(stops, routes, connections, *stop_num, *route_num);
+                command_i(&stops, routes, connections, *stop_num, *route_num);
                 break;
+            case 'a':
+                free_memory(stops, routes, connections, ptr_stop, ptr_route, 
+                            ptr_connection);
+                break;
+        }
     }
-    return TRUE;
 }
 
 /*------------------------------------------------------------------------------
@@ -136,8 +171,8 @@ void free_arguments(char **arguments, int max_arguments) {
  *              of arguments
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_p(char line[], Stop stops[], Connection connections[], 
-               Route routes[], int *stop_num, int route_num) {
+void command_p(char line[], Stop **stops, Connection *connections, 
+               Route *routes, int *stop_num, int route_num) {
 
     char **arguments = NULL;
     int max_arguments = 3;
@@ -172,7 +207,7 @@ void command_p(char line[], Stop stops[], Connection connections[],
  *              of arguments
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_c(char line[], Route routes[],  Connection connections[],
+void command_c(char line[], Route **routes,  Connection *connections,
                int *route_num) {
 
     char **arguments = NULL;
@@ -183,7 +218,7 @@ void command_c(char line[], Route routes[],  Connection connections[],
     switch(arg_number) {
         case 0:
             for (i = 0; i < *route_num; i++)
-                print_route_description(routes[i]);
+                print_route_description((*routes)[i]);
             break;
 
         case 1:
@@ -208,8 +243,8 @@ void command_c(char line[], Route routes[],  Connection connections[],
  * Description: function that handles the command "l"
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_l(char line[], Route routes[], Stop stops[], 
-                Connection connections[], int *connection_num, int route_num,
+void command_l(char line[], Route **routes, Stop *stops, 
+                Connection **connections, int *connection_num, int route_num,
                 int stop_num) {
 
     /* the way this command works is by adding connections to an array, and 
@@ -219,29 +254,26 @@ void command_l(char line[], Route routes[], Stop stops[],
      *improving efficiency                                                    */
 
     char **args = NULL;
-    int i, add_end = FALSE; /*to check if we're adding to the end of the route*/
+    int add_end = FALSE; /*to check if we're adding to the end of the route*/
     int max_arguments = 5;
+    int route_index;
     int arg_number = parser(line, &args, max_arguments);
-    if (!is_valid_connection(args, routes, stops, stop_num, route_num))
+    if (!is_valid_connection(args, routes, stops, stop_num, route_num,
+                             &route_index))
         return;
 
-    for(i = 0; i < route_num; i++) {
-        if(strcmp(routes[i].name, args[0]) == EQUAL) {
-            create_connection(args, routes, connections, i, *connection_num);
-            if (routes[i].stops_number == 0) { /*if it's the first connection*/
-                add_route_information(args, routes, i, add_end);
-            }
-            else if (strcmp(args[1], routes[i].last_stop) == EQUAL) {
-                add_end = TRUE;
-                change_route_information(args, routes, connections, i, add_end, 
-                                         *connection_num);
-            }
-            else { /*when we're adding to the beggining of the route*/
-                change_route_information(args, routes, connections, i, add_end, 
-                                         *connection_num);
-            }
-            break;
-        }
+    create_connection(args, routes, connections, route_index, *connection_num);
+    if ((*routes)[route_index].stops_number == 0) { /*if it's the first connection*/
+        add_route_information(args, routes, route_index, add_end);
+    }
+    else if (strcmp(args[1], (*routes)[route_index].last_stop) == EQUAL) {
+        add_end = TRUE;
+        change_route_information(args, routes, connections, route_index, 
+                                 add_end, *connection_num);
+    }
+    else { /*when we're adding to the beggining of the route*/
+        change_route_information(args, routes, connections, route_index, 
+                                 add_end, *connection_num);
     }
     (*connection_num)++;
     free_arguments(args, arg_number);
@@ -252,23 +284,23 @@ void command_l(char line[], Route routes[], Stop stops[],
  * Description: function that handles the command i
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_i(Stop stops[], Route routes[], Connection connections[],
+void command_i(Stop **stops, Route *routes, Connection *connections,
                int stop_num, int route_num) {
 
     int i, j, k, pos = 0;
 
     for (i = 0; i < stop_num; i++) {
-        stops[i] = add_routes_passing(stops[i], connections, routes, route_num);
+        (*stops)[i] = add_routes_passing((*stops)[i], connections, routes, route_num);
         /*to update the number of routes that go through that stop*/
-        if (stops[i].routes_passing > 1) { 
-            int list_of_routes[MAX_ROUTES] = {0}; 
+        if ((*stops)[i].routes_passing > 1) { 
+            int *list_of_routes = malloc(sizeof(int) * route_num);
 
             for (j = 0; j < route_num; j++) {
                 k = routes[j].start_index; /*to get first connection*/
-                pos = check_first_and_last(stops[i], routes[j], j, 
+                pos = check_first_and_last((*stops)[i], routes[j], j, 
                                             list_of_routes, pos);
                 while (k != routes[j].end_index) { /*until the last one*/
-                    if (strcmp(stops[i].name, \
+                    if (strcmp((*stops)[i].name, \
                         connections[k].final_stop) == EQUAL) {
                             list_of_routes[pos] = j;
                             pos++;
@@ -278,8 +310,9 @@ void command_i(Stop stops[], Route routes[], Connection connections[],
                 }
             }
             bubble_sort(routes, list_of_routes, pos);
-            print_routes_passing(pos, list_of_routes, stops[i], routes);
+            print_routes_passing(pos, list_of_routes, (*stops)[i], routes);
             pos = 0;
+            free(list_of_routes);
         }
     }
 }     
@@ -290,7 +323,7 @@ void command_i(Stop stops[], Route routes[], Connection connections[],
  *              passing through
  * Output: returns the stop with the number of routes updated
 ------------------------------------------------------------------------------*/
-Stop add_routes_passing(Stop p_stop, Connection connection[], Route routes[],
+Stop add_routes_passing(Stop p_stop, Connection *connection, Route *routes,
                         int route_num) {
 
     int i;
@@ -328,13 +361,23 @@ Stop add_routes_passing(Stop p_stop, Connection connection[], Route routes[],
  * Description: function that creates a stop given by the user
  * Output: since it adds to a list of stops, it doesn't return anything
 ------------------------------------------------------------------------------*/
-void create_stop(char **arguments, Stop stops[], int *stop_num) {
-
-    strcpy(stops[*stop_num].name, arguments[0]);
-    stops[*stop_num].latitude = atof(arguments[1]);
-    stops[*stop_num].longitude = atof(arguments[2]);
-    stops[*stop_num].routes_passing = 0;
+void create_stop(char **arguments, Stop **stops, int *stop_num) {
+    
+    Stop *temp;  /* temporary pointer */
+    int length = strlen(arguments[0]);
+    if (*stop_num == 0) {
+        temp = (Stop *) malloc(sizeof(Stop));
+    }
+    else {
+        temp = (Stop *) realloc(*stops, (*stop_num + 1) * sizeof(Stop));
+    }
+    temp[*stop_num].name = malloc(sizeof(char) * (length + 1));
+    strcpy(temp[*stop_num].name, arguments[0]);
+    temp[*stop_num].latitude = atof(arguments[1]);
+    temp[*stop_num].longitude = atof(arguments[2]);
+    temp[*stop_num].routes_passing = 0;
     (*stop_num)++;
+    *stops = temp;  /* stops now points to the new array */
 }
 
 /*------------------------------------------------------------------------------
@@ -342,16 +385,16 @@ void create_stop(char **arguments, Stop stops[], int *stop_num) {
  * Description: function that prints all the stops
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void list_stops(Stop stops[], Connection connections[], Route routes[],
+void list_stops(Stop **stops, Connection *connections, Route *routes,
                 int stop_num, int route_num) {
     
     int i; 
 
     for (i = 0; i < stop_num; i++) {
-        stops[i] = add_routes_passing(stops[i], connections, routes, route_num);
-        printf("%s: %16.12f %16.12f %d\n", stops[i].name, 
-                stops[i].latitude, stops[i].longitude, 
-                stops[i].routes_passing);
+        (*stops)[i] = add_routes_passing((*stops)[i], connections, routes, route_num);
+        printf("%s: %16.12f %16.12f %d\n", (*stops)[i].name, 
+                (*stops)[i].latitude, (*stops)[i].longitude, 
+                (*stops)[i].routes_passing);
     }
 }
 
@@ -360,15 +403,15 @@ void list_stops(Stop stops[], Connection connections[], Route routes[],
  * Description: function that checks if certain stop exists
  * Output: returns TRUE if the stop exists, FALSE otherwise
 ------------------------------------------------------------------------------*/
-int check_stop(char arguments[], Stop stops[], int arg_number, int stop_num) {
+int check_stop(char arguments[], Stop **stops, int arg_number, int stop_num) {
 
     int i;
 
     for (i = 0; i < stop_num; i++) {
-        if (strcmp(stops[i].name, arguments) == EQUAL) {
+        if (strcmp((*stops)[i].name, arguments) == EQUAL) {
             if (arg_number == 1) {
-                printf("%16.12f %16.12f\n", stops[i].latitude, 
-                                            stops[i].longitude);
+                printf("%16.12f %16.12f\n", (*stops)[i].latitude, 
+                                            (*stops)[i].longitude);
             }
             return TRUE;
         }
@@ -381,17 +424,28 @@ int check_stop(char arguments[], Stop stops[], int arg_number, int stop_num) {
  * Description: function that creates a route given by the user
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void create_route(char **arguments, Route routes[], 
+void create_route(char **arguments, Route **routes, 
                   int *route_num) {
 
-    strcpy(routes[*route_num].name, arguments[0]);
-    routes[*route_num].stops_number = 0;
-    routes[*route_num].cost = 0;
-    routes[*route_num].duration = 0;
-    routes[*route_num].start_index = -1;
-    /*since we don't have stops in this route yet*/
+    Route *temp; 
+    int length = strlen(arguments[0]);
+
+    if (*route_num == 0) {
+        temp = (Route *) malloc(sizeof(Route));
+    }
+    else {
+        temp = (Route *) realloc(*routes, (*route_num + 1) * sizeof(Route));
+    }
+    *routes = temp;
+    (*routes)[*route_num].name = malloc(sizeof(char) * (length + 1));
+    strcpy((*routes)[*route_num].name, arguments[0]);
+    (*routes)[*route_num].stops_number = 0;
+    (*routes)[*route_num].cost = 0;
+    (*routes)[*route_num].duration = 0;
+    (*routes)[*route_num].start_index = -1;
     (*route_num)++;
 }
+    
 
 /*------------------------------------------------------------------------------
  * Function: get_stops_route
@@ -400,29 +454,29 @@ void create_route(char **arguments, Route routes[],
  * Output: return TRUE if the route exists, FALSE otherwise
 ------------------------------------------------------------------------------*/
 int get_stops_route(char **arguments, 
-                    Route routes[], Connection connections[], int route_num) {
+                    Route **routes, Connection *connections, int route_num) {
     int i, j;
     int exists = FALSE;
 
     for (i = 0; i < route_num; i++) {
-        if (strcmp(routes[i].name, arguments[0]) == EQUAL) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
 
             exists = TRUE;
 
-            if ((routes[i].stops_number) == 0)
+            if (((*routes)[i].stops_number) == 0)
                 break;
 
-            printf("%s", routes[i].first_stop);
-            j = routes[i].start_index; /*to get the first connection*/
+            printf("%s", (*routes)[i].first_stop);
+            j = (*routes)[i].start_index; /*to get the first connection*/
 
-            while (j != routes[i].end_index) { /*until the last one*/
+            while (j != (*routes)[i].end_index) { /*until the last one*/
                 printf(", %s", connections[j].final_stop);
                 /*print final stop from each connection and jump to 
                 next of the same route                                        */
                 j = connections[j].next_index;
             }
 
-            printf(", %s\n", routes[i].last_stop);
+            printf(", %s\n", (*routes)[i].last_stop);
             break;
         }
     }
@@ -436,25 +490,25 @@ int get_stops_route(char **arguments,
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
 void get_inverted_stops_route(char **arguments, 
-                              Route routes[], Connection connections[], 
+                              Route **routes, Connection *connections, 
                               int route_num) {
     int i, j;
 
     /*it's the same as the function before, but we go from end to beginning*/
     for (i = 0; i < route_num; i++) {
-        if (strcmp(routes[i].name, arguments[0]) == EQUAL) {
-            if (routes[i].stops_number == 0)
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+            if ((*routes)[i].stops_number == 0)
                 break;
 
-            j = routes[i].end_index;
-            printf("%s", routes[i].last_stop);
+            j = (*routes)[i].end_index;
+            printf("%s", (*routes)[i].last_stop);
 
-            while (j != routes[i].start_index) {
+            while (j != (*routes)[i].start_index) {
                 printf(", %s", connections[j].initial_stop);
                 j = connections[j].prev_index;
             }
 
-            printf(", %s\n", routes[i].first_stop);
+            printf(", %s\n", (*routes)[i].first_stop);
         }
     }
 }
@@ -506,17 +560,26 @@ void print_route_description(Route spec_route) {
  *              certain route
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void create_connection(char **arguments, Route routes[], 
-                       Connection connections[], int i, int connection_num) {
+void create_connection(char **arguments, Route **routes, 
+                       Connection **connections, int route_index, int connection_num) {
 
-    strcpy(connections[connection_num].route_name,arguments[0]);
-    strcpy(connections[connection_num].initial_stop, arguments[1]);
-    strcpy(connections[connection_num].final_stop, arguments[2]);
-    connections[connection_num].cost = atof(arguments[3]);
-    connections[connection_num].duration = atof(arguments[4]);
+    Connection *temp;
+    if (connection_num == 0) {
+        temp = (Connection *) malloc(sizeof(Connection));
+    }
+    else {
+        temp = (Connection *) realloc(*connections, 
+                      (connection_num + 1) * sizeof(Connection));
+    }
+    temp[connection_num].route_index = route_index;
+    strcpy(temp[connection_num].initial_stop, arguments[1]);
+    strcpy(temp[connection_num].final_stop, arguments[2]);
+    temp[connection_num].cost = atof(arguments[3]);
+    temp[connection_num].duration = atof(arguments[4]);
+    *connections = temp;
     /*to update route's cost and duration*/
-    routes[i].cost += connections[connection_num].cost;
-    routes[i].duration += connections[connection_num].duration;
+    (*routes)[route_index].cost += (*connections)[connection_num].cost;
+    (*routes)[route_index].duration += (*connections)[connection_num].duration;
 }
 
 /*------------------------------------------------------------------------------
@@ -525,14 +588,14 @@ void create_connection(char **arguments, Route routes[],
  *              connection given to the array of routes
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void add_route_information(char **arguments, Route routes[], 
+void add_route_information(char **arguments, Route **routes, 
                            int i, int connection_num) {
 
-    routes[i].stops_number = 2; /*since it's the first connection of the route*/
-    strcpy(routes[i].first_stop, arguments[1]);
-    strcpy(routes[i].last_stop, arguments[2]);
-    routes[i].start_index = connection_num;
-    routes[i].end_index = connection_num;
+    (*routes)[i].stops_number = 2; /*since it's the first connection of the route*/
+    strcpy((*routes)[i].first_stop, arguments[1]);
+    strcpy((*routes)[i].last_stop, arguments[2]);
+    (*routes)[i].start_index = connection_num;
+    (*routes)[i].end_index = connection_num;
     
 }
 
@@ -542,37 +605,37 @@ void add_route_information(char **arguments, Route routes[],
  *              to the connection given
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void change_route_information(char **args, Route routes[],
-                              Connection connections[], int i, int add_end, 
+void change_route_information(char **args, Route **routes,
+                              Connection **connections, int i, int add_end, 
                               int connection_num) {
 
     int j;
-    routes[i].stops_number++;
+    (*routes)[i].stops_number++;
     if (add_end) { /*if we add the connection to the end of the route*/
-        strcpy(routes[i].last_stop, args[2]);
-        routes[i].end_index = connection_num; /*update route's end*/
+        strcpy((*routes)[i].last_stop, args[2]);
+        (*routes)[i].end_index = connection_num; /*update route's end*/
 
         for (j = connection_num-1; j >= 0; j--) {
-            if (strcmp(connections[j].final_stop, 
+            if (strcmp((*connections)[j].final_stop, 
             args[1]) == EQUAL) {
                 /* when we find the last connection, we update the index to 
                 the new one, and the new one we create the index to the 
                 previous connection                                           */
-                connections[j].next_index = connection_num;
-                connections[connection_num].prev_index = j;
+                (*connections)[j].next_index = connection_num;
+                (*connections)[connection_num].prev_index = j;
                 break;
             }
         }
     }
     else { /*if we add the connection to the beginning of the route*/
-        strcpy(routes[i].first_stop, args[1]);
-        routes[i].start_index = connection_num;
+        strcpy((*routes)[i].first_stop, args[1]);
+        (*routes)[i].start_index = connection_num;
         for (j = connection_num-1; j >= 0; j--) {
-            if (strcmp(connections[j].initial_stop, 
+            if (strcmp((*connections)[j].initial_stop, 
             args[2]) == EQUAL) {
                 /*the opposite to the add to end case*/
-                connections[j].prev_index = connection_num;
-                connections[connection_num].next_index = j;
+                (*connections)[j].prev_index = connection_num;
+                (*connections)[connection_num].next_index = j;
                 break;
             }
         }
@@ -585,23 +648,23 @@ void change_route_information(char **args, Route routes[],
  * Output: return TRUE all checks are passed, FALSE otherwise
 ------------------------------------------------------------------------------*/
 int is_valid_connection(char **arguments,
-                        Route routes[], Stop stops[], 
-                        int stop_num, int route_num) {
+                        Route **routes, Stop *stops, 
+                        int stop_num, int route_num, int *route_index) {
 
-    int current_route, exists = FALSE;
+    int exists = FALSE;
 
-    current_route = find_route(arguments, routes, route_num); 
+    *route_index = find_route(arguments, routes, route_num); 
     /*so we can get the route to check if the stops belong to the end 
       or the beggining                                                        */
-    if (current_route == NO_ROUTE)
+    if (*route_index == NO_ROUTE)
         return FALSE;
 
     if (!find_stops(arguments, stops, stop_num))
         return FALSE;
 
-    if ((routes[current_route].start_index == -1)||
-        (strcmp(routes[current_route].last_stop, arguments[1]) == EQUAL) ||
-        (strcmp(routes[current_route].first_stop, arguments[2]) == EQUAL)) {
+    if (((*routes)[*route_index].start_index == -1)||
+        (strcmp((*routes)[*route_index].last_stop, arguments[1]) == EQUAL) ||
+        (strcmp((*routes)[*route_index].first_stop, arguments[2]) == EQUAL)) {
             exists = TRUE;
     }
     if (!exists) {
@@ -620,12 +683,12 @@ int is_valid_connection(char **arguments,
  * Description: function that finds the route given in the connections command
  * Output: return the number of the route if it exists, NO_ROUTE otherwise
 ------------------------------------------------------------------------------*/
-int find_route(char **arguments, Route routes[], 
+int find_route(char **arguments, Route **routes, 
                int route_num) {
 
     int i, current_route, exists = FALSE;
     for (i = 0; i < route_num; i++) {
-        if (strcmp(arguments[0], routes[i].name) == EQUAL) {
+        if (strcmp(arguments[0], (*routes)[i].name) == EQUAL) {
             current_route = i;
             exists = TRUE;
             break;
@@ -643,7 +706,7 @@ int find_route(char **arguments, Route routes[],
  * Description: function that finds the stops given in the connections command
  * Output: return TRUE if both stops exist, FALSE otherwise
 ------------------------------------------------------------------------------*/
-int find_stops(char **arguments, Stop stops[], int stop_num) {
+int find_stops(char **arguments, Stop *stops, int stop_num) {
 
     int i, exists = FALSE, exists_second = FALSE;
     for (i = 0; i < stop_num; i++) {
@@ -671,7 +734,7 @@ int find_stops(char **arguments, Stop stops[], int stop_num) {
  * Description: function that sorts the routes in alphabetical order
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void bubble_sort(Route routes[], int list_of_routes[], int len) {
+void bubble_sort(Route *routes, int list_of_routes[], int len) {
 
     int i, j, aux;
 
@@ -714,7 +777,7 @@ int check_first_and_last(Stop spec_stop, Route spec_route, int j,
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
 void print_routes_passing(int pos, int list_of_routes[], 
-                          Stop spec_stop, Route routes[]) {
+                          Stop spec_stop, Route *routes) {
 
     int j; 
 
