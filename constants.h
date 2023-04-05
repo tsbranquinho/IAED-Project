@@ -34,7 +34,7 @@ typedef struct { /*struct of stops*/
 } Stop;
 
 typedef struct { /*struct of connections*/
-    int route_index;
+    char *route_name;
     char initial_stop[STOP_NAME_LENGTH];
     char final_stop[STOP_NAME_LENGTH];
     int next_index;
