@@ -461,13 +461,6 @@ Stop add_routes_passing(Stop p_stop, Connection *connection, Route *routes,
                 p_stop.routes_passing++;
             }
             else {
-                if (j == routes[i].end_index) {
-                    /*if it's circular*/
-                    if (strcmp(p_stop.name, connection[j].final_stop) == EQUAL) {
-                        p_stop.routes_passing++;
-                    }
-                    continue;
-                }
                 while (j != routes[i].end_index) {
                     if (strcmp(p_stop.name, connection[j].final_stop) == EQUAL &&
                         connection[j].ended == FALSE) {
@@ -896,7 +889,7 @@ int find_stops(char **arguments, Stop *stops, int stop_num) {
  * Description: function that sorts the routes in alphabetical order
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void bubble_sort(Route *routes, int list_of_routes[], int len) {
+void bubble_sort(Route *routes, int *list_of_routes, int len) {
 
     int i, j, aux;
 
