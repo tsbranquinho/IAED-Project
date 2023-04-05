@@ -102,6 +102,9 @@ void handle_commands(Stop *stops,
                 free_memory(stops, routes, connections, ptr_stop, ptr_route, 
                             ptr_connection);
                 break;
+            case 'r':
+                command_r(line, &routes, &connections, 
+                          ptr_connection, ptr_route);
         }
     }
 }
@@ -316,6 +319,48 @@ void command_i(Stop **stops, Route *routes, Connection *connections,
         }
     }
 }     
+
+void command_r(char line[], Route **routes, 
+               Connection **connections, int *connection_num,
+               int *route_num) {
+    
+    char **arguments = NULL;
+    int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
+    int route_index, exists = FALSE, i, counter = 0;
+
+    for (i = 0; i < *route_num; i++) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+            route_index = i;
+            exists = TRUE;
+            break;
+        }
+    }
+    if (!exists) {
+        printf("%s: no such line.", arguments[0]);
+        return;
+    }
+    for (i = route_index; i < *route_num-1; i++) {
+        (*routes)[i] = (*routes)[i+1];
+    }
+    free((*routes)[*route_num-1].name);
+    (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
+    (*route_num)--;
+    i = 0;
+    while (i < *connection_num-1) {
+        if ((*connections)[i].route_index == route_index) {
+            (*connections)[i] = (*connections)[i+1];
+            counter++;
+        }
+        else
+            i++;
+    }
+    if ((*connections)[i].route_index == route_index)
+        counter++;
+    if ((counter) != 0 && (*connection_num > 0))
+        (*connections) = realloc((*connections), sizeof(Connection) * (*connection_num-counter));
+    *connection_num -= counter;
+    free_arguments(arguments, arg_number);
+}
 
 /*------------------------------------------------------------------------------
  * Function: add_routes_passing
