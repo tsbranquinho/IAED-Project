@@ -28,6 +28,6 @@ void command_i(Stop **stops, Route *routes, Connection *connections, int stop_nu
 void bubble_sort(Route *routes, int list_of_routes[], int size);
 void free_arguments(char **arguments, int arg_number);
 void free_memory(Stop *stops, Route *routes, Connection *connections, int *stop_num, int *route_num, int *connection_num);
-void command_r(char line[], Route **routes, Connection **connections, int *connection_num, int *route_num);
+void command_r(char line[], Route **routes, Connection **connections, int connection_num, int *route_num);
 
 #endif /*prototypes*/
