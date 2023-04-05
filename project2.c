@@ -447,30 +447,35 @@ Stop add_routes_passing(Stop p_stop, Connection *connection, Route *routes,
 
     for (i = 0; i < route_num; i++) {
         int j = routes[i].start_index;
-        if (routes[i].first_stop != NULL) {
-            if (strcmp(p_stop.name, routes[i].first_stop) == EQUAL) {
-            /*if the stop is the first one of the route*/
-                p_stop.routes_passing++;
-            }
-        }
-        if (routes[i].last_stop != NULL) {
-            if (strcmp(p_stop.name, routes[i].last_stop) == EQUAL) {
-            /*if the stop is the last one of the route*/
-                p_stop.routes_passing++;
-            }
-        }
-        else if (j == -1) {
+        if (j == -1) {
             /*if there aren't any stops*/
             continue;
         }
         else {
-            while (j != routes[i].end_index) {
-                if (strcmp(p_stop.name, connection[j].final_stop) == EQUAL &&
-                    connection[j].ended == FALSE) {
+            if (strcmp(p_stop.name, routes[i].first_stop) == EQUAL) {
+            /*if the stop is the first one of the route*/
+                p_stop.routes_passing++;
+            }
+            else if (strcmp(p_stop.name, routes[i].last_stop) == EQUAL) {
+            /*if the stop is the last one of the route*/
+                p_stop.routes_passing++;
+            }
+            else {
+                if (j == routes[i].end_index) {
+                    /*if it's circular*/
+                    if (strcmp(p_stop.name, connection[j].final_stop) == EQUAL) {
                         p_stop.routes_passing++;
-                        break;
+                    }
+                    continue;
                 }
-                j = connection[j].next_index;
+                while (j != routes[i].end_index) {
+                    if (strcmp(p_stop.name, connection[j].final_stop) == EQUAL &&
+                        connection[j].ended == FALSE) {
+                            p_stop.routes_passing++;
+                            break;
+                    }
+                    j = connection[j].next_index;
+                }
             }
         }
     }
