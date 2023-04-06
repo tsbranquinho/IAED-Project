@@ -352,6 +352,7 @@ void command_i(Stop **stops, Route *routes, Connection *connections,
         /*to update the number of routes that go through that stop*/
         if ((*stops)[i].routes_passing > 1) { 
             int *list_of_routes = malloc(sizeof(int) * route_num);
+            memset(list_of_routes, NO_ROUTE, sizeof(int) * route_num);
 
             for (j = 0; j < route_num; j++) {
                 k = routes[j].start_index; /*to get first connection*/
@@ -501,6 +502,7 @@ int create_stop(char **arguments, Stop **stops, int *stop_num) {
     int length = strlen(arguments[0]);
     if (*stop_num == 0) {
         temp = (Stop *) malloc(sizeof(Stop) * STOP_INCREMENT);
+        memset(temp, 0, sizeof(Stop) * STOP_INCREMENT);
     }
     else if (*stop_num % STOP_INCREMENT == 0){
         temp = (Stop *) realloc(*stops, ((*stop_num/STOP_INCREMENT)+1) * STOP_INCREMENT * sizeof(Stop));
@@ -571,6 +573,7 @@ int create_route(char **arguments, Route **routes,
 
     if (*route_num == 0) {
         temp = (Route *) malloc(sizeof(Route) * ROUTE_INCREMENT);
+        memset(temp, 0, sizeof(Route) * ROUTE_INCREMENT);
     }
     else if (*route_num % ROUTE_INCREMENT == 0){
         temp = (Route *) realloc(*routes, ((*route_num/ROUTE_INCREMENT)+1) * ROUTE_INCREMENT * sizeof(Route));
@@ -715,6 +718,7 @@ int create_connection(char **arguments, Route **routes,
     int length;
     if (connection_num == 0) {
         temp = (Connection *) malloc(sizeof(Connection) * CONNECTION_INCREMENT);
+        memset(temp, 0, sizeof(Connection) * CONNECTION_INCREMENT);
     }
     else if (connection_num % CONNECTION_INCREMENT == 0) {
         temp = (Connection *) realloc(*connections, (connection_num/CONNECTION_INCREMENT + 1) * CONNECTION_INCREMENT * sizeof(Connection));
