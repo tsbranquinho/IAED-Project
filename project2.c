@@ -45,14 +45,19 @@ void free_memory(Stop *stops, Route *routes, Connection *connections,
                  int *stop_num, int *route_num, int *connection_num) {
 
     int i;
+    int max;
     if (*stop_num > 0) {
-        for (i = 0; i < *stop_num; i++)
-            free(stops[i].name);
+        max = ((*stop_num/STOP_INCREMENT)+1)*STOP_INCREMENT;
+        for (i = 0; i < max; i++)
+            if (stops[i].name != NULL)
+                free(stops[i].name);
         free(stops);
     }
     if (*route_num > 0) {
-        for (i = 0; i < *route_num; i++) {
-            free(routes[i].name);
+        max = (*route_num/ROUTE_INCREMENT)+1*ROUTE_INCREMENT;
+        for (i = 0; i < max; i++) {
+            if (routes[i].name != NULL)
+                free(routes[i].name);
             if (routes[i].first_stop != NULL)
                 free(routes[i].first_stop);
             if (routes[i].last_stop != NULL)
@@ -61,11 +66,14 @@ void free_memory(Stop *stops, Route *routes, Connection *connections,
         free(routes);
     }
     if (*connection_num > 0) {
-        for (i = 0; i < *connection_num; i++) {
+        max = (*connection_num/CONNECTION_INCREMENT)+1*CONNECTION_INCREMENT;
+        for (i = 0; i < max; i++) {
             if (connections[i].ended == FALSE) {
-                free(connections[i].route_name);
-                free(connections[i].initial_stop);
-                free(connections[i].final_stop);
+                if (connections[i].route_name != NULL) {
+                    free(connections[i].route_name);
+                    free(connections[i].initial_stop);
+                    free(connections[i].final_stop);
+                }
             }
         }
         free(connections);
@@ -311,7 +319,7 @@ int command_l(char line[], Route **routes, Stop *stops,
     }
 
     if ((*routes)[route_index].stops_number == 0) { /*if it's the first connection*/
-        add_route_information(args, routes, route_index, add_end, 
+        add_route_information(args, routes, route_index, *connection_num, 
                               size_1, size_2);
     }
     else if (strcmp(args[1], (*routes)[route_index].last_stop) == EQUAL) {
@@ -605,7 +613,6 @@ int get_stops_route(char **arguments,
 
             if (((*routes)[i].stops_number) == 0)
                 break;
-
             printf("%s", (*routes)[i].first_stop);
             j = (*routes)[i].start_index; /*to get the first connection*/
 
@@ -753,7 +760,6 @@ void add_route_information(char **arguments, Route **routes,
     strcpy((*routes)[i].last_stop, arguments[2]);
     (*routes)[i].start_index = connection_num;
     (*routes)[i].end_index = connection_num;
-    
 }
 
 /*------------------------------------------------------------------------------
