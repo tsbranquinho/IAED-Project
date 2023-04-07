@@ -45,35 +45,33 @@ void free_memory(Stop *stops, Route *routes, Connection *connections,
                  int *stop_num, int *route_num, int *connection_num) {
 
     int i;
-    int max;
+    /*int max;*/
     if (*stop_num > 0) {
-        max = ((*stop_num/STOP_INCREMENT)+1)*STOP_INCREMENT;
-        for (i = 0; i < max; i++)
+        /*max = ((*stop_num/STOP_INCREMENT)+1)*STOP_INCREMENT;*/
+        for (i = 0; i < *stop_num; i++)
             if (stops[i].name != NULL)
                 free(stops[i].name);
         free(stops);
     }
     if (*route_num > 0) {
-        max = (*route_num/ROUTE_INCREMENT)+1*ROUTE_INCREMENT;
-        for (i = 0; i < max; i++) {
+        /*max = ((*route_num/ROUTE_INCREMENT)+1)*ROUTE_INCREMENT;*/
+        for (i = 0; i < *route_num; i++) {
             if (routes[i].name != NULL)
                 free(routes[i].name);
             if (routes[i].first_stop != NULL)
                 free(routes[i].first_stop);
             if (routes[i].last_stop != NULL)
-                free(routes[i].last_stop);  
+                free(routes[i].last_stop);
         }
         free(routes);
     }
     if (*connection_num > 0) {
-        max = (*connection_num/CONNECTION_INCREMENT)+1*CONNECTION_INCREMENT;
-        for (i = 0; i < max; i++) {
-            if (connections[i].ended == FALSE) {
-                if (connections[i].route_name != NULL) {
-                    free(connections[i].route_name);
-                    free(connections[i].initial_stop);
-                    free(connections[i].final_stop);
-                }
+        /*max = ((*connection_num/CONNECTION_INCREMENT)+1)*CONNECTION_INCREMENT;*/
+        for (i = 0; i < *connection_num; i++) {
+            if (connections[i].route_name != NULL) {
+                free(connections[i].route_name);
+                free(connections[i].initial_stop);
+                free(connections[i].final_stop);
             }
         }
         free(connections);
@@ -501,11 +499,10 @@ int create_stop(char **arguments, Stop **stops, int *stop_num) {
     Stop *temp = *stops;  /* temporary pointer */
     int length = strlen(arguments[0]);
     if (*stop_num == 0) {
-        temp = (Stop *) malloc(sizeof(Stop) * STOP_INCREMENT);
-        memset(temp, 0, sizeof(Stop) * STOP_INCREMENT);
+        temp = (Stop *) malloc(sizeof(Stop));
     }
-    else if (*stop_num % STOP_INCREMENT == 0){
-        temp = (Stop *) realloc(*stops, ((*stop_num/STOP_INCREMENT)+1) * STOP_INCREMENT * sizeof(Stop));
+    else {
+        temp = (Stop *) realloc(*stops, ((*stop_num)+1) * sizeof(Stop));
     }
     if (temp == NULL)
         return ERROR;
@@ -565,38 +562,33 @@ int check_stop(char arguments[], Stop **stops, int arg_number, int stop_num) {
  * Description: function that creates a route given by the user
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-int create_route(char **arguments, Route **routes, 
-                  int *route_num) {
-
-    Route *temp = *routes; 
+int create_route(char **arguments, Route **routes, int *route_num) {
     int length = strlen(arguments[0]);
 
     if (*route_num == 0) {
-        temp = (Route *) malloc(sizeof(Route) * ROUTE_INCREMENT);
-        memset(temp, 0, sizeof(Route) * ROUTE_INCREMENT);
+        *routes = (Route *) malloc(sizeof(Route));
     }
-    else if (*route_num % ROUTE_INCREMENT == 0){
-        temp = (Route *) realloc(*routes, ((*route_num/ROUTE_INCREMENT)+1) * ROUTE_INCREMENT * sizeof(Route));
+    else {
+        *routes = (Route *) realloc(*routes, ((*route_num)+1)*sizeof(Route));
     }   
-    if (temp == NULL)
+    if (*routes == NULL)
         return ERROR;
 
-    temp[*route_num].name = malloc(sizeof(char) * (length + 1));
-    if (temp[*route_num].name == NULL)
+    (*routes)[*route_num].name = malloc(sizeof(char) * (length + 1));
+    if ((*routes)[*route_num].name == NULL)
         return ERROR;
-    strcpy(temp[*route_num].name, arguments[0]);
-    temp[*route_num].stops_number = 0;
-    temp[*route_num].cost = 0;
-    temp[*route_num].duration = 0;
-    temp[*route_num].start_index = ERROR;
-    temp[*route_num].end_index = END;
-    temp[*route_num].first_stop = NULL;
-    temp[*route_num].last_stop = NULL;
+    strcpy((*routes)[*route_num].name, arguments[0]);
+    (*routes)[*route_num].stops_number = 0;
+    (*routes)[*route_num].cost = 0;
+    (*routes)[*route_num].duration = 0;
+    (*routes)[*route_num].start_index = ERROR;
+    (*routes)[*route_num].end_index = END;
+    (*routes)[*route_num].first_stop = NULL;
+    (*routes)[*route_num].last_stop = NULL;
     (*route_num)++;
-    *routes = temp; 
     return TRUE;
 }
-    
+
 
 /*------------------------------------------------------------------------------
  * Function: get_stops_route
@@ -717,11 +709,10 @@ int create_connection(char **arguments, Route **routes,
     Connection *temp = *connections;
     int length;
     if (connection_num == 0) {
-        temp = (Connection *) malloc(sizeof(Connection) * CONNECTION_INCREMENT);
-        memset(temp, 0, sizeof(Connection) * CONNECTION_INCREMENT);
+        temp = (Connection *) malloc(sizeof(Connection));
     }
-    else if (connection_num % CONNECTION_INCREMENT == 0) {
-        temp = (Connection *) realloc(*connections, (connection_num/CONNECTION_INCREMENT + 1) * CONNECTION_INCREMENT * sizeof(Connection));
+    else {
+        temp = (Connection *) realloc(temp, (connection_num + 1) * sizeof(Connection));
     }
     if (temp == NULL)
         return ERROR;
