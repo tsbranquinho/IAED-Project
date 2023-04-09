@@ -29,6 +29,6 @@ void bubble_sort(Route *routes, int list_of_routes[], int size);
 void free_arguments(char **arguments, int arg_number);
 void free_memory(Stop *stops, Route *routes, int *stop_num, int *route_num);
 void command_r(char line[], Route **routes, int *route_num);
-void command_e(char line[], /*Stop **stops,*/ int *stop_num, Route **routes/*, int route_num*/);
+void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int route_num);
 
 #endif /*prototypes*/
