@@ -253,7 +253,6 @@ int command_c(char line[], Route **routes,
     switch(arg_number) {
         case 0:
             for (i = 0; i < *route_num; i++) {
-                printf("-> route %d:", i);
                 print_route_description((*routes)[i]);
             }
             break;
