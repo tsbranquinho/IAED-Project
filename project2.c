@@ -134,9 +134,9 @@ void handle_commands(Stop *stops,
             case 'r':
                 command_r(line, &routes, ptr_route);
                 break;
-            /*case 'e':
-                command_e(line, &stops, ptr_stop, &routes, *route_num);
-                break;*/
+            case 'e':
+                command_e(line, /*&stops,*/ ptr_stop, &routes/*, *route_num*/);
+                break;
         }
     }
 }
@@ -411,15 +411,15 @@ void command_r(char line[], Route **routes, int *route_num) {
     free_arguments(arguments, arg_number);
 }
 
-/*void command_e(char line[], Stop **stops, int *stop_num, Route **routes, 
-               int route_num) {
+void command_e(char line[], /*Stop **stops,*/ int *stop_num, Route **routes/*,*/
+               /*int route_num*/) {
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
-    int stop_index = 0, exists = FALSE, i;
+    int /*stop_index = 0,*/ exists = FALSE, i;
 
     for (i = 0; i < *stop_num; i++) {
         if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
-            stop_index = i;
+            /*stop_index = i;*/
             exists = TRUE;
             break;
         }
@@ -427,16 +427,16 @@ void command_r(char line[], Route **routes, int *route_num) {
     if (!exists) {
         printf("%s: no such stop.\n", arguments[0]);
     }
-    else {
+    /*else {
         free((*stops)[stop_index].name);
         for (i = stop_index; i < *stop_num-1; i++) {
             (*stops)[i] = (*stops)[i+1];
         }
         (*stops) = realloc((*stops), sizeof(Stop) * (*stop_num-1));
         (*stop_num)--;
-    }
+    }*/
     free_arguments(arguments, arg_number);
-}*/
+}
 
 /*------------------------------------------------------------------------------
  * Function: add_routes_passing
