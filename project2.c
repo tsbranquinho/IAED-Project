@@ -376,52 +376,6 @@ void command_i(Stop **stops, Route *routes,
     }
 }
 
-void copy_route(Route *dest, Route *src) {
-    Linked *src_conn;
-    Linked *prev_dest_conn;
-    dest->name = malloc(strlen(src->name) + 1);
-    strcpy(dest->name, src->name);
-    if (src->stops_number != 0) {
-        dest->first_stop = malloc(strlen(src->first_stop) + 1);
-        strcpy(dest->first_stop, src->first_stop);
-        dest->last_stop = malloc(strlen(src->last_stop) + 1);
-        strcpy(dest->last_stop, src->last_stop);
-    }
-    else {
-        dest->first_stop = NULL;
-        dest->last_stop = NULL;
-    }
-    dest->cost = src->cost;
-    dest->duration = src->duration;
-    dest->stops_number = src->stops_number;
-
-    src_conn = src->first_connection;
-    prev_dest_conn = NULL;
-    while (src_conn != NULL) {
-        Linked *dest_conn = malloc(sizeof(Linked));
-        dest_conn->spec_connection.route_name = malloc(strlen(src_conn->spec_connection.route_name) + 1);
-        strcpy(dest_conn->spec_connection.route_name, src_conn->spec_connection.route_name);
-        dest_conn->spec_connection.initial_stop = malloc(strlen(src_conn->spec_connection.initial_stop) + 1);
-        strcpy(dest_conn->spec_connection.initial_stop, src_conn->spec_connection.initial_stop);
-        dest_conn->spec_connection.final_stop = malloc(strlen(src_conn->spec_connection.final_stop) + 1);
-        strcpy(dest_conn->spec_connection.final_stop, src_conn->spec_connection.final_stop);
-        dest_conn->spec_connection.cost = src_conn->spec_connection.cost;
-        dest_conn->spec_connection.duration = src_conn->spec_connection.duration;
-        dest_conn->next = NULL;
-
-        if (prev_dest_conn == NULL) {
-            dest->first_connection = dest_conn;
-        } 
-        else {
-            prev_dest_conn->next = dest_conn;
-        }
-        prev_dest_conn = dest_conn;
-
-        src_conn = src_conn->next;
-    }
-    dest->last_connection = prev_dest_conn;
-}
-
 void command_r(char line[], Route **routes, int *route_num) {
 
     char **arguments = NULL;
@@ -429,7 +383,9 @@ void command_r(char line[], Route **routes, int *route_num) {
     int route_index = 0, exists = FALSE, i;
 
     for (i = 0; i < *route_num; i++) {
-        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+        if ((*routes)[i].name == NULL)
+            continue;
+        else if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
             route_index = i;
             exists = TRUE;
             break;
@@ -447,8 +403,8 @@ void command_r(char line[], Route **routes, int *route_num) {
             free_linked_list((*routes)[route_index].first_connection);
         }
 
-        for (i = route_index; i < *route_num-1; i++) {
-            copy_route(&(*routes)[i], &(*routes)[i+1]);
+        /*for (i = route_index; i < *route_num-1; i++) {
+            (*routes)[i] = (*routes)[i+1];
         }
         free((*routes)[*route_num-1].name);
         if ((*routes)[*route_num-1].stops_number != 0) {
@@ -457,7 +413,12 @@ void command_r(char line[], Route **routes, int *route_num) {
             free_linked_list((*routes)[*route_num-1].first_connection);
         }
         (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
-        (*route_num)--;
+        (*route_num)--;*/
+        (*routes)[route_index].name = NULL;
+        (*routes)[route_index].first_stop = NULL;
+        (*routes)[route_index].last_stop = NULL;
+        (*routes)[route_index].first_connection = NULL;
+        (*routes)[route_index].stops_number = 0;
     
     }
     free_arguments(arguments, arg_number);
@@ -634,7 +595,10 @@ int get_stops_route(char **arguments,
     Linked *aux;
 
     for (i = 0; i < route_num; i++) {
-        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+        if ((*routes)[i].name == NULL) {
+            continue;
+        }
+        else if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
 
             exists = TRUE;
 
@@ -670,7 +634,9 @@ void get_inverted_stops_route(char **arguments,
 
     /*it's the same as the function before, but we go from end to beginning*/
     for (i = 0; i < route_num; i++) {
-        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+        if ((*routes)[i].name == NULL)
+            continue;
+        else if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
             if ((*routes)[i].stops_number == 0)
                 break;
 
@@ -714,7 +680,9 @@ int is_inverted(char argument[]) {
 ------------------------------------------------------------------------------*/
 void print_route_description(Route spec_route) {
 
-    if (spec_route.stops_number == 0) {
+    if (spec_route.name == NULL)
+        return;
+    else if (spec_route.stops_number == 0) {
         printf("%s %d %.2f %.2f\n", spec_route.name,
                 spec_route.stops_number, spec_route.cost,
                 spec_route.duration);
