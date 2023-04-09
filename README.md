@@ -12,45 +12,61 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 # Evaluation
 
-2023-04-09T14:35:17
+2023-04-09T18:55:21
 
 ## Test 1: [+ Accepted+].
 ## Test 2: [+ Accepted+].
 ## Test 3: [+ Accepted+].
-## Test 4: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 4: [- Wrong Answer-].
+
 
 ## Test 5: [+ Accepted+].
-## Test 6: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 6: [- Wrong Answer-].
+
 
 ## Test 7: [+ Accepted+].
 ## Test 8: [+ Accepted+].
-## Test 9: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 9: [- Wrong Answer-].
 
-## Test 10: [- Command terminated by signal (11: SIGSEGV)-].
 
-## Test 11: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 10: [- Wrong Answer-].
 
-## Test 12: [- Command terminated by signal (11: SIGSEGV)-].
 
-## Test 13: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 11: [- Wrong Answer-].
 
-## Test 14: [- Command terminated by signal (11: SIGSEGV)-].
 
-## Test 15: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 12: [- Wrong Answer-].
 
-## Test 16: [- Command terminated by signal (11: SIGSEGV)-].
 
-## Test 17: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 13: [- Wrong Answer-].
 
-## Test 18: [- Command terminated by signal (11: SIGSEGV)-].
 
-## Test 19: [- Command terminated by signal (11: SIGSEGV)-].
+## Test 14: [- Wrong Answer-].
 
-## Test 20: [- Command terminated by signal (11: SIGSEGV)-].
+
+## Test 15: [- Wrong Answer-].
+
+
+## Test 16: [- Wrong Answer-].
+
+
+## Test 17: [- Wrong Answer-].
+
+
+## Test 18: [- Wrong Answer-].
+
+
+## Test 19: [- Wrong Answer-].
+
+
+## Test 20: [- Wrong Answer-].
+
 
 ## Test 21: [+ Accepted+].
 ## Test 22: [+ Accepted+].
-## Test 23: [+ Accepted+].
+## Test 23: [- Wrong Answer-].
+
+
 ## Test 24: [+ Accepted+].
 ## Test 25: [- Wrong Answer-].
 
@@ -67,33 +83,35 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 ## Test 31: [- Memory Limit Exceeded-].
 
-## Test 32: [+ Accepted+].
+## Test 32: [- Wrong Answer-].
 
 
-## Number of passed tests: 12/32
+
+
+## Number of passed tests: 10/32
 
 
 ## Valgrind Output:
 
 
 ```
-==14645== Memcheck, a memory error detector
-==14645== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==14645== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
-==14645== Command: ./proj.out
-==14645== 
-==14645== 
-==14645== HEAP SUMMARY:
-==14645==     in use at exit: 0 bytes in 0 blocks
-==14645==   total heap usage: 604 allocs, 604 frees, 13,187,715 bytes allocated
-==14645== 
-==14645== All heap blocks were freed -- no leaks are possible
-==14645== 
-==14645== For counts of detected and suppressed errors, rerun with: -v
-==14645== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==10431== Memcheck, a memory error detector
+==10431== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==10431== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==10431== Command: ./proj.out
+==10431== 
+==10431== 
+==10431== HEAP SUMMARY:
+==10431==     in use at exit: 0 bytes in 0 blocks
+==10431==   total heap usage: 592 allocs, 592 frees, 12,925,507 bytes allocated
+==10431== 
+==10431== All heap blocks were freed -- no leaks are possible
+==10431== 
+==10431== For counts of detected and suppressed errors, rerun with: -v
+==10431== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ```
 
 
-Your code will not be reevaluated if you submit before 2023-04-09 14:45:17 @ Lisbon, Portugal. You need to wait 10 minute(s).
+Your code will not be reevaluated if you submit before 2023-04-09 19:05:21 @ Lisbon, Portugal. You need to wait 10 minute(s).
 
