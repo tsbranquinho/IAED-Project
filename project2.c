@@ -252,8 +252,10 @@ int command_c(char line[], Route **routes,
 
     switch(arg_number) {
         case 0:
-            for (i = 0; i < *route_num; i++)
+            for (i = 0; i < *route_num; i++) {
+                printf("-> route %d:", i);
                 print_route_description((*routes)[i]);
+            }
             break;
 
         case 1:
@@ -375,7 +377,7 @@ void command_r(char line[], Route **routes, int *route_num) {
 
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
-    int route_index = 0, exists = FALSE, i, size;
+    int route_index = 0, exists = FALSE, i;
 
     for (i = 0; i < *route_num; i++) {
         if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
@@ -389,100 +391,23 @@ void command_r(char line[], Route **routes, int *route_num) {
         printf("%s: no such line.\n", arguments[0]);
     }
     else {
-        for (i =  route_index; i <*route_num-1; i++) {
-            free((*routes)[route_index].name);
-            size = strlen((*routes)[i+1].name);
-            (*routes)[i].name = malloc(sizeof(char) * (size+1));
-            strcpy((*routes)[i].name, (*routes)[i+1].name);
-            (*routes)[i].stops_number = (*routes)[i+1].stops_number;
-            (*routes)[i].first_connection = (*routes)[i+1].first_connection;
-            (*routes)[i].last_connection = (*routes)[i+1].last_connection;
-            if ((*routes)[i].stops_number != 0) {
-                free((*routes)[i].first_stop);
-                free((*routes)[i].last_stop);
-            }
-            if ((*routes)[i+1].stops_number != 0) {
-                size = strlen((*routes)[i+1].first_stop);
-                (*routes)[i].first_stop = malloc(sizeof(char) * (size+1));
-                strcpy((*routes)[i].first_stop, (*routes)[i+1].first_stop);
-                size = strlen((*routes)[i+1].last_stop);
-                (*routes)[i].last_stop = malloc(sizeof(char) * (size+1));
-                strcpy((*routes)[i].last_stop, (*routes)[i+1].last_stop);
-            }
-            else {
-                (*routes)[i].first_stop = NULL;
-                (*routes)[i].last_stop = NULL;
-            }
-            (*routes)[i].duration = (*routes)[i+1].duration;
-            (*routes)[i].cost = (*routes)[i+1].cost;
+        free((*routes)[route_index].name);
+        if ((*routes)[route_index].stops_number != 0) {
+            free((*routes)[route_index].first_stop);
+            free((*routes)[route_index].last_stop);
+            free_linked_list((*routes)[route_index].first_connection);
         }
-        free((*routes)[*route_num-1].name);
-        if ((*routes)[*route_num-1].stops_number != 0) {
-            free((*routes)[*route_num-1].first_stop);
-            free((*routes)[*route_num-1].last_stop);
+
+        for (i = route_index; i < *route_num-1; i++) {
+            (*routes)[i] = (*routes)[i+1];
         }
-        free_linked_list((*routes)[*route_num-1].first_connection);
+
         (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
         (*route_num)--;
-    }
-    free_arguments(arguments, arg_number);
-}
-/*
-void command_r(char line[], Route **routes, int *route_num) {
     
-    char **arguments = NULL;
-    int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
-    int route_index = 0, exists = FALSE, i, size;
-
-    for (i = 0; i < *route_num; i++) {
-        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
-            route_index = i;
-            exists = TRUE;
-            break;
-        }
-    }
-    if (!exists) {
-        printf("%s: no such line.\n", arguments[0]);
-    }
-    else {
-        for (i = route_index; i < *route_num-1; i++) {
-            free((*routes)[i].name);
-            size = strlen((*routes)[i+1].name);
-            (*routes)[i].name = malloc(sizeof(char) * (size+1));
-            strcpy((*routes)[i].name,(*routes)[i+1].name);
-            (*routes)[i].stops_number = (*routes)[i+1].stops_number;
-            (*routes)[i].start_index = (*routes)[i+1].start_index;
-            (*routes)[i].end_index = (*routes)[i+1].end_index;
-            if ((*routes)[i].first_stop != NULL)
-                free((*routes)[i].first_stop);
-            if ((*routes)[i].last_stop != NULL)
-                free((*routes)[i].last_stop);
-            if ((*routes)[i+1].first_stop != NULL) {
-                size = strlen((*routes)[i+1].first_stop);
-                (*routes)[i].first_stop = malloc(sizeof(char) * (size+1));
-                strcpy((*routes)[i].first_stop, (*routes)[i+1].first_stop);
-            }
-            if ((*routes)[i+1].last_stop != NULL) {
-                size = strlen((*routes)[i+1].last_stop);
-                (*routes)[i].last_stop = malloc(sizeof(char) * (size+1));
-                strcpy((*routes)[i].last_stop, (*routes)[i+1].last_stop);
-            }
-            (*routes)[i].duration = (*routes)[i+1].duration;
-            (*routes)[i].cost = (*routes)[i+1].cost;
-        }
-
-        free((*routes)[*route_num-1].name);
-
-        if ((*routes)[*route_num-1].first_stop != NULL)
-            free((*routes)[*route_num-1].first_stop);
-        if ((*routes)[*route_num-1].last_stop != NULL)
-            free((*routes)[*route_num-1].last_stop);
-        (*route_num)--;
-        *routes = realloc(*routes, sizeof(Route) * (*route_num));
     }
     free_arguments(arguments, arg_number);
 }
-*/
 
 /*------------------------------------------------------------------------------
  * Function: add_routes_passing
