@@ -9,9 +9,8 @@
 #define TRUE 1 /*boolean value: true                                          */
 #define INV_LEN 3 /*length of the abbreviation inv                            */
 #define INVERSO_LEN 7 /*length of the word inverso                            */
-#define ROUTE_INCREMENT 100 /*increment of the allocs for routes               */
+#define ROUTE_INCREMENT 100 /*increment of the allocs for routes              */
 #define STOP_INCREMENT 1000 /*increment of the allocs for stops               */
-#define CONNECTION_INCREMENT 1000 /*increment of the allocs for connections   */
 #define BUFFER 65535 /*maximum number of characters in a line                 */
 #define INVERSO "inverso" /*the word inverso*/
 
