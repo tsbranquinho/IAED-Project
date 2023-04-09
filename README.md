@@ -12,7 +12,7 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 # Evaluation
 
-2023-04-09T19:15:14
+2023-04-09T19:22:06
 
 ## Test 1: [+ Accepted+].
 ## Test 2: [+ Accepted+].
@@ -73,43 +73,41 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 
 ## Test 27: [+ Accepted+].
-## Test 28: [- Memory Limit Exceeded-].
+## Test 28: [+ Accepted+].
+## Test 29: [+ Accepted+].
+## Test 30: [+ Accepted+].
+## Test 31: [- Wrong Answer-].
 
-## Test 29: [- Memory Limit Exceeded-].
-
-## Test 30: [- Memory Limit Exceeded-].
-
-## Test 31: [- Memory Limit Exceeded-].
 
 ## Test 32: [- Wrong Answer-].
 
 
 
 
-## Number of passed tests: 11/32
+## Number of passed tests: 14/32
 
 
 ## Valgrind Output:
 
 
 ```
-==22126== Memcheck, a memory error detector
-==22126== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==22126== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
-==22126== Command: ./proj.out
-==22126== 
-==22126== 
-==22126== HEAP SUMMARY:
-==22126==     in use at exit: 0 bytes in 0 blocks
-==22126==   total heap usage: 592 allocs, 592 frees, 1,985,112 bytes allocated
-==22126== 
-==22126== All heap blocks were freed -- no leaks are possible
-==22126== 
-==22126== For counts of detected and suppressed errors, rerun with: -v
-==22126== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==29118== Memcheck, a memory error detector
+==29118== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==29118== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==29118== Command: ./proj.out
+==29118== 
+==29118== 
+==29118== HEAP SUMMARY:
+==29118==     in use at exit: 0 bytes in 0 blocks
+==29118==   total heap usage: 592 allocs, 592 frees, 20,065 bytes allocated
+==29118== 
+==29118== All heap blocks were freed -- no leaks are possible
+==29118== 
+==29118== For counts of detected and suppressed errors, rerun with: -v
+==29118== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ```
 
 
-Your code will not be reevaluated if you submit before 2023-04-09 19:25:14 @ Lisbon, Portugal. You need to wait 10 minute(s).
+Your code will not be reevaluated if you submit before 2023-04-09 19:32:06 @ Lisbon, Portugal. You need to wait 10 minute(s).
 
