@@ -18,10 +18,8 @@ int main() {
 
     int route_num = 0;
     int stop_num = 0;
-    int connection_num = 0;
     Route routes = {0};
     Stop stops = {0};
-    Connection connections = {0};
 
     /*while ((c = getchar()) != EOF) {
         int end;
@@ -36,13 +34,28 @@ int main() {
         }
     }
     */
-    handle_commands(&stops, &routes, &connections, &route_num, 
-                    &stop_num, &connection_num);
+    handle_commands(&stops, &routes, &route_num, 
+                    &stop_num);
     return 0;
 }
 
-void free_memory(Stop *stops, Route *routes, Connection *connections, 
-                 int *stop_num, int *route_num, int *connection_num) {
+void free_linked_list(Linked *head) {
+    Linked *current = head;
+    while (current != NULL) {
+        Linked *next = current->next;
+        if (current->spec_connection.route_name != NULL)
+            free(current->spec_connection.route_name);
+        if (current->spec_connection.initial_stop != NULL)
+            free(current->spec_connection.initial_stop);
+        if (current->spec_connection.final_stop != NULL)
+            free(current->spec_connection.final_stop);
+        free(current);
+        current = next;
+    }
+}
+
+void free_memory(Stop *stops, Route *routes, 
+                 int *stop_num, int *route_num) {
 
     int i;
     /*int max;*/
@@ -62,23 +75,12 @@ void free_memory(Stop *stops, Route *routes, Connection *connections,
                 free(routes[i].first_stop);
             if (routes[i].last_stop != NULL)
                 free(routes[i].last_stop);
+            free_linked_list(routes[i].first_connection);
         }
         free(routes);
     }
-    if (*connection_num > 0) {
-        /*max = ((*connection_num/CONNECTION_INCREMENT)+1)*CONNECTION_INCREMENT;*/
-        for (i = 0; i < *connection_num; i++) {
-            if (connections[i].route_name != NULL) {
-                free(connections[i].route_name);
-                free(connections[i].initial_stop);
-                free(connections[i].final_stop);
-            }
-        }
-        free(connections);
-    }
     *stop_num = 0;
     *route_num = 0;
-    *connection_num = 0;
 }
 /*------------------------------------------------------------------------------
  * Function: handle_command
@@ -86,12 +88,11 @@ void free_memory(Stop *stops, Route *routes, Connection *connections,
  * Output: returns FALSE if user terminates the program, TRUE otherwise
 ------------------------------------------------------------------------------*/
 void handle_commands(Stop *stops, 
-                   Route *routes, Connection *connections, int *route_num,
-                   int *stop_num, int *connection_num) {
+                   Route *routes, int *route_num,
+                   int *stop_num) {
 
     int *ptr_route = route_num;
     int *ptr_stop = stop_num;
-    int *ptr_connection = connection_num;
     char c, line[BUFFER];
     while ((c = getchar()) != EOF) {
         if (fgets(line, BUFFER, stdin) == NULL) {
@@ -99,45 +100,39 @@ void handle_commands(Stop *stops,
         }
         switch(c) {
             case 'q':
-                free_memory(stops, routes, connections, ptr_stop, ptr_route, 
-                            ptr_connection);
+                free_memory(stops, routes, ptr_stop, ptr_route);
                 return;
             case 'c':
-                if (command_c(line, &routes, connections, ptr_route) == ERROR) {
-                    free_memory(stops, routes, connections, ptr_stop, ptr_route, 
-                            ptr_connection);
+                if (command_c(line, &routes, ptr_route) == ERROR) {
+                    free_memory(stops, routes, ptr_stop, ptr_route);
                     printf("No memory.\n");
                     exit(1);
                 }
                 break;
             case 'p':
-                if (command_p(line, &stops, connections, routes, 
+                if (command_p(line, &stops, routes, 
                               ptr_stop, *route_num) == ERROR) {
-                    free_memory(stops, routes, connections, ptr_stop, ptr_route, 
-                                ptr_connection);
+                    free_memory(stops, routes, ptr_stop, ptr_route);
                     printf("No memory.\n");
                     exit(1);
                 }
                 break;
             case 'l':
-                if (command_l(line, &routes, stops, &connections, ptr_connection,
+                if (command_l(line, &routes, stops,
                           *route_num, *stop_num) == ERROR) {
-                    free_memory(stops, routes, connections, ptr_stop, ptr_route, 
-                                ptr_connection);
+                    free_memory(stops, routes, ptr_stop, ptr_route);
                     printf("No memory.\n");
                     exit(1);
                 }
                 break;
             case 'i':
-                command_i(&stops, routes, connections, *stop_num, *route_num);
+                command_i(&stops, routes, *stop_num, *route_num);
                 break;
             case 'a':
-                free_memory(stops, routes, connections, ptr_stop, ptr_route, 
-                            ptr_connection);
+                free_memory(stops, routes, ptr_stop, ptr_route);
                 break;
             case 'r':
-                command_r(line, &routes, &connections, 
-                          *connection_num, ptr_route);
+                command_r(line, &routes, ptr_route);
         }
     }
 }
@@ -207,7 +202,7 @@ void free_arguments(char **arguments, int max_arguments) {
  *              of arguments
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-int command_p(char line[], Stop **stops, Connection *connections, 
+int command_p(char line[], Stop **stops, 
                Route *routes, int *stop_num, int route_num) {
 
     char **arguments = NULL;
@@ -216,7 +211,7 @@ int command_p(char line[], Stop **stops, Connection *connections,
 
     switch (arg_number) {
         case 0:
-            list_stops(stops, connections, routes, *stop_num, route_num);
+            list_stops(stops, routes, *stop_num, route_num);
             break;
 
         case 1:
@@ -247,7 +242,7 @@ int command_p(char line[], Stop **stops, Connection *connections,
  *              of arguments
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-int command_c(char line[], Route **routes,  Connection *connections,
+int command_c(char line[], Route **routes,
                int *route_num) {
 
     char **arguments = NULL;
@@ -262,7 +257,7 @@ int command_c(char line[], Route **routes,  Connection *connections,
             break;
 
         case 1:
-            exists = get_stops_route(arguments, routes, connections, *route_num);
+            exists = get_stops_route(arguments, routes, *route_num);
             if (!exists) 
                 if (create_route(arguments, routes, route_num) == ERROR) {
                     free_arguments(arguments, arg_number);
@@ -276,7 +271,7 @@ int command_c(char line[], Route **routes,  Connection *connections,
                 printf("incorrect sort option.\n");
                 break;
             }
-            get_inverted_stops_route(arguments, routes, connections, *route_num);
+            get_inverted_stops_route(arguments, routes, *route_num);
     }
     free_arguments(arguments, max_arguments);
     return TRUE;
@@ -287,8 +282,7 @@ int command_c(char line[], Route **routes,  Connection *connections,
  * Description: function that handles the command "l"
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-int command_l(char line[], Route **routes, Stop *stops, 
-                Connection **connections, int *connection_num, int route_num,
+int command_l(char line[], Route **routes, Stop *stops, int route_num,
                 int stop_num) {
 
     /* the way this command works is by adding connections to an array, and 
@@ -301,6 +295,7 @@ int command_l(char line[], Route **routes, Stop *stops,
     int add_end = FALSE; /*to check if we're adding to the end of the route*/
     int max_arguments = 5;
     int route_index, size_1, size_2;
+    Connection spec_connection;
 
     int arg_number = parser(line, &args, max_arguments);
     if (!is_valid_connection(args, routes, stops, stop_num, route_num,
@@ -310,65 +305,61 @@ int command_l(char line[], Route **routes, Stop *stops,
     }
     size_1 = strlen(args[1]);
     size_2 = strlen(args[2]);
-    if (create_connection(args, routes, connections, route_index, 
-                         *connection_num, size_1, size_2) == ERROR) {
-            free_arguments(args, arg_number);
-            return ERROR;
+    if (create_connection(args, routes, route_index, size_1, size_2, &spec_connection) == ERROR) {
+        free_arguments(args, arg_number);
+        return ERROR;
     }
 
     if ((*routes)[route_index].stops_number == 0) { /*if it's the first connection*/
-        add_route_information(args, routes, route_index, *connection_num, 
-                              size_1, size_2);
+        add_route_information(args, routes, route_index,
+                              size_1, size_2, spec_connection);
     }
     else if (strcmp(args[1], (*routes)[route_index].last_stop) == EQUAL) {
         add_end = TRUE;
-        change_route_information(args, routes, connections, route_index, 
-                                add_end, *connection_num, size_2);
+        change_route_information(args, routes, route_index, 
+                                add_end, size_2, spec_connection);
     }
     else { /*when we're adding to the beggining of the route*/
-        change_route_information(args, routes, connections, route_index, 
-                                add_end, *connection_num, size_1);
+        change_route_information(args, routes, route_index, 
+                                add_end, size_1, spec_connection);
     }
-    (*connection_num)++;
     free_arguments(args, arg_number);
     return TRUE;
 }
 
 /*------------------------------------------------------------------------------
- * Function: command:i
+ * Function: command_i
  * Description: function that handles the command i
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_i(Stop **stops, Route *routes, Connection *connections,
+void command_i(Stop **stops, Route *routes,
                int stop_num, int route_num) {
     
-    /*está todo fodido, tenho de reescrever*/
-    int i, j, k, pos = 0;
-
+    int i, j, pos = 0;
+    
     for (i = 0; i < stop_num; i++) {
-        (*stops)[i] = add_routes_passing((*stops)[i], connections, routes, route_num);
-        /*to update the number of routes that go through that stop*/
-        if ((*stops)[i].routes_passing > 1) { 
+        (*stops)[i] = add_routes_passing((*stops)[i], routes, route_num);
+        if ((*stops)[i].routes_passing > 1) {
             int *list_of_routes = malloc(sizeof(int) * route_num);
-            memset(list_of_routes, NO_ROUTE, sizeof(int) * route_num);
 
             for (j = 0; j < route_num; j++) {
-                k = routes[j].start_index; /*to get first connection*/
-                if (routes[j].start_index == NO_ROUTE)
+                if (routes[j].stops_number == 0) {
                     continue;
+                }
+                else if ((strcmp((*stops)[i].name, routes[j].first_stop) == EQUAL) || 
+                        (strcmp((*stops)[i].name, routes[j].last_stop)) == EQUAL) {
+                            list_of_routes[pos] = j;
+                            pos++;
+                }   
                 else {
-                    pos = check_first_and_last((*stops)[i], routes[j], j, 
-                                                list_of_routes, pos);
-                    while (k != routes[j].end_index) { /*until the last one*/
-                        if (connections[k].ended == TRUE)
+                    Linked *aux = routes[j].first_connection;
+                    while (aux != NULL) {
+                        if (strcmp((*stops)[i].name, aux->spec_connection.final_stop) == EQUAL) {
+                            list_of_routes[pos] = j;
+                            pos++;
                             break;
-                        if (strcmp((*stops)[i].name, \
-                            connections[k].final_stop) == EQUAL) {
-                                list_of_routes[pos] = j;
-                                pos++;
-                                break;
                         }
-                        k = connections[k].next_index; /*to get next connection*/
+                        aux = aux->next;
                     }
                 }
             }
@@ -378,11 +369,66 @@ void command_i(Stop **stops, Route *routes, Connection *connections,
             free(list_of_routes);
         }
     }
-}     
+}
 
-void command_r(char line[], Route **routes, 
-               Connection **connections, int connection_num,
-               int *route_num) {
+void command_r(char line[], Route **routes, int *route_num) {
+
+    char **arguments = NULL;
+    int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
+    int route_index = 0, exists = FALSE, i, size;
+
+    for (i = 0; i < *route_num; i++) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+            route_index = i;
+            exists = TRUE;
+            break;
+        }
+    }
+
+    if (!exists) {
+        printf("%s: no such line.\n", arguments[0]);
+    }
+    else {
+        for (i =  route_index; i <*route_num-1; i++) {
+            free((*routes)[route_index].name);
+            size = strlen((*routes)[i+1].name);
+            (*routes)[i].name = malloc(sizeof(char) * (size+1));
+            strcpy((*routes)[i].name, (*routes)[i+1].name);
+            (*routes)[i].stops_number = (*routes)[i+1].stops_number;
+            (*routes)[i].first_connection = (*routes)[i+1].first_connection;
+            (*routes)[i].last_connection = (*routes)[i+1].last_connection;
+            if ((*routes)[i].stops_number != 0) {
+                free((*routes)[i].first_stop);
+                free((*routes)[i].last_stop);
+            }
+            if ((*routes)[i+1].stops_number != 0) {
+                size = strlen((*routes)[i+1].first_stop);
+                (*routes)[i].first_stop = malloc(sizeof(char) * (size+1));
+                strcpy((*routes)[i].first_stop, (*routes)[i+1].first_stop);
+                size = strlen((*routes)[i+1].last_stop);
+                (*routes)[i].last_stop = malloc(sizeof(char) * (size+1));
+                strcpy((*routes)[i].last_stop, (*routes)[i+1].last_stop);
+            }
+            else {
+                (*routes)[i].first_stop = NULL;
+                (*routes)[i].last_stop = NULL;
+            }
+            (*routes)[i].duration = (*routes)[i+1].duration;
+            (*routes)[i].cost = (*routes)[i+1].cost;
+        }
+        free((*routes)[*route_num-1].name);
+        if ((*routes)[*route_num-1].stops_number != 0) {
+            free((*routes)[*route_num-1].first_stop);
+            free((*routes)[*route_num-1].last_stop);
+        }
+        free_linked_list((*routes)[*route_num-1].first_connection);
+        (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
+        (*route_num)--;
+    }
+    free_arguments(arguments, arg_number);
+}
+/*
+void command_r(char line[], Route **routes, int *route_num) {
     
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
@@ -431,21 +477,12 @@ void command_r(char line[], Route **routes,
             free((*routes)[*route_num-1].first_stop);
         if ((*routes)[*route_num-1].last_stop != NULL)
             free((*routes)[*route_num-1].last_stop);
-            
         (*route_num)--;
-
-        for (i = 0; i < connection_num; i++) {
-            if ((strcmp((*connections)[i].route_name, arguments[0]) == EQUAL) &&
-                (*connections)[i].ended == FALSE) {
-                    free((*connections)[i].route_name);
-                    free((*connections)[i].initial_stop);
-                    free((*connections)[i].final_stop);
-                    (*connections)[i].ended = TRUE;
-            }
-        }
+        *routes = realloc(*routes, sizeof(Route) * (*route_num));
     }
     free_arguments(arguments, arg_number);
 }
+*/
 
 /*------------------------------------------------------------------------------
  * Function: add_routes_passing
@@ -453,36 +490,27 @@ void command_r(char line[], Route **routes,
  *              passing through
  * Output: returns the stop with the number of routes updated
 ------------------------------------------------------------------------------*/
-Stop add_routes_passing(Stop p_stop, Connection *connection, Route *routes,
-                        int route_num) {
+Stop add_routes_passing(Stop p_stop, Route *routes, int route_num) {
 
     int i;
+    Linked *aux;
     p_stop.routes_passing = 0;
-
     for (i = 0; i < route_num; i++) {
-        int j = routes[i].start_index;
-        if (j == -1) {
-            /*if there aren't any stops*/
+        if (routes[i].stops_number == 0) {
             continue;
         }
+        else if (strcmp(p_stop.name, routes[i].first_stop) == EQUAL ||
+            strcmp(p_stop.name, routes[i].last_stop) == EQUAL) {
+                p_stop.routes_passing++;
+        }
         else {
-            if (strcmp(p_stop.name, routes[i].first_stop) == EQUAL) {
-            /*if the stop is the first one of the route*/
-                p_stop.routes_passing++;
-            }
-            else if (strcmp(p_stop.name, routes[i].last_stop) == EQUAL) {
-            /*if the stop is the last one of the route*/
-                p_stop.routes_passing++;
-            }
-            else {
-                while (j != routes[i].end_index) {
-                    if (strcmp(p_stop.name, connection[j].final_stop) == EQUAL &&
-                        connection[j].ended == FALSE) {
-                            p_stop.routes_passing++;
-                            break;
-                    }
-                    j = connection[j].next_index;
+            aux = routes[i].first_connection;
+            while(aux != routes[i].last_connection) {
+                if (strcmp(p_stop.name, aux->spec_connection.final_stop) == EQUAL) {
+                    p_stop.routes_passing++;
+                    break;
                 }
+                aux = aux->next;
             }
         }
     }
@@ -495,26 +523,23 @@ Stop add_routes_passing(Stop p_stop, Connection *connection, Route *routes,
  * Output: since it adds to a list of stops, it doesn't return anything
 ------------------------------------------------------------------------------*/
 int create_stop(char **arguments, Stop **stops, int *stop_num) {
-    
-    Stop *temp = *stops;  /* temporary pointer */
     int length = strlen(arguments[0]);
     if (*stop_num == 0) {
-        temp = (Stop *) malloc(sizeof(Stop));
+        *stops = (Stop *) malloc(sizeof(Stop));
     }
     else {
-        temp = (Stop *) realloc(*stops, ((*stop_num)+1) * sizeof(Stop));
+        *stops = (Stop *) realloc(*stops, ((*stop_num)+1) * sizeof(Stop));
     }
-    if (temp == NULL)
+    if (*stops == NULL)
         return ERROR;
-    temp[*stop_num].name = malloc(sizeof(char) * (length + 1));
-    if (temp[*stop_num].name == NULL)
+    (*stops)[*stop_num].name = malloc(sizeof(char) * (length + 1));
+    if ((*stops)[*stop_num].name == NULL)
         return ERROR;
-    strcpy(temp[*stop_num].name, arguments[0]);
-    temp[*stop_num].latitude = atof(arguments[1]);
-    temp[*stop_num].longitude = atof(arguments[2]);
-    temp[*stop_num].routes_passing = 0;
+    strcpy((*stops)[*stop_num].name, arguments[0]);
+    (*stops)[*stop_num].latitude = atof(arguments[1]);
+    (*stops)[*stop_num].longitude = atof(arguments[2]);
+    (*stops)[*stop_num].routes_passing = 0;
     (*stop_num)++;
-    *stops = temp;  /* stops now points to the new array */
     return TRUE;
 }
 
@@ -523,13 +548,13 @@ int create_stop(char **arguments, Stop **stops, int *stop_num) {
  * Description: function that prints all the stops
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void list_stops(Stop **stops, Connection *connections, Route *routes,
+void list_stops(Stop **stops, Route *routes,
                 int stop_num, int route_num) {
     
     int i; 
 
     for (i = 0; i < stop_num; i++) {
-        (*stops)[i] = add_routes_passing((*stops)[i], connections, routes, route_num);
+        (*stops)[i] = add_routes_passing((*stops)[i], routes, route_num);
         printf("%s: %16.12f %16.12f %d\n", (*stops)[i].name, 
                 (*stops)[i].latitude, (*stops)[i].longitude, 
                 (*stops)[i].routes_passing);
@@ -581,10 +606,10 @@ int create_route(char **arguments, Route **routes, int *route_num) {
     (*routes)[*route_num].stops_number = 0;
     (*routes)[*route_num].cost = 0;
     (*routes)[*route_num].duration = 0;
-    (*routes)[*route_num].start_index = ERROR;
-    (*routes)[*route_num].end_index = END;
     (*routes)[*route_num].first_stop = NULL;
     (*routes)[*route_num].last_stop = NULL;
+    (*routes)[*route_num].first_connection = NULL;
+    (*routes)[*route_num].last_connection = NULL;
     (*route_num)++;
     return TRUE;
 }
@@ -597,25 +622,25 @@ int create_route(char **arguments, Route **routes, int *route_num) {
  * Output: return TRUE if the route exists, FALSE otherwise
 ------------------------------------------------------------------------------*/
 int get_stops_route(char **arguments, 
-                    Route **routes, Connection *connections, int route_num) {
-    int i, j;
+                    Route **routes, int route_num) {
+    int i;
     int exists = FALSE;
+    Linked *aux;
 
     for (i = 0; i < route_num; i++) {
         if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
 
             exists = TRUE;
 
-            if (((*routes)[i].stops_number) == 0)
+            if ((*routes)[i].stops_number == 0)
                 break;
+            
+            aux = (*routes)[i].first_connection;
             printf("%s", (*routes)[i].first_stop);
-            j = (*routes)[i].start_index; /*to get the first connection*/
 
-            while (j != (*routes)[i].end_index) { /*until the last one*/
-                printf(", %s", connections[j].final_stop);
-                /*print final stop from each connection and jump to 
-                next of the same route                                        */
-                j = connections[j].next_index;
+            while (aux != (*routes)[i].last_connection) {
+                printf(", %s", aux->spec_connection.final_stop);
+                aux = aux->next;
             }
 
             printf(", %s\n", (*routes)[i].last_stop);
@@ -632,9 +657,10 @@ int get_stops_route(char **arguments,
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
 void get_inverted_stops_route(char **arguments, 
-                              Route **routes, Connection *connections, 
+                              Route **routes, 
                               int route_num) {
-    int i, j;
+    int i;
+    Linked *aux;
 
     /*it's the same as the function before, but we go from end to beginning*/
     for (i = 0; i < route_num; i++) {
@@ -642,12 +668,12 @@ void get_inverted_stops_route(char **arguments,
             if ((*routes)[i].stops_number == 0)
                 break;
 
-            j = (*routes)[i].end_index;
+            aux = (*routes)[i].last_connection;
             printf("%s", (*routes)[i].last_stop);
 
-            while (j != (*routes)[i].start_index) {
-                printf(", %s", connections[j].initial_stop);
-                j = connections[j].prev_index;
+            while(aux != (*routes)[i].first_connection) {
+                printf(", %s", aux->spec_connection.initial_stop);
+                aux = aux->prev;
             }
 
             printf(", %s\n", (*routes)[i].first_stop);
@@ -702,40 +728,25 @@ void print_route_description(Route spec_route) {
  *              certain route
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-int create_connection(char **arguments, Route **routes, 
-                       Connection **connections, int route_index, 
-                       int connection_num, int size_1, int size_2) {
+int create_connection(char **arguments, Route **routes, int route_index, 
+                      int size_1, int size_2, Connection *spec_connection) {
 
-    Connection *temp = *connections;
-    int length;
-    if (connection_num == 0) {
-        temp = (Connection *) malloc(sizeof(Connection));
-    }
-    else {
-        temp = (Connection *) realloc(temp, (connection_num + 1) * sizeof(Connection));
-    }
-    if (temp == NULL)
+    spec_connection->route_name = malloc(sizeof(char) * (strlen(arguments[0]) + 1));
+    if (spec_connection->route_name == NULL)
         return ERROR;
-    length = strlen(arguments[0]);
-    temp[connection_num].route_name = malloc(sizeof(char) * (length + 1));
-    if (temp[connection_num].route_name == NULL)
+    strcpy(spec_connection->route_name, arguments[0]);
+    spec_connection->initial_stop = malloc(sizeof(char) * (size_1 + 1));
+    if (spec_connection->initial_stop == NULL)
         return ERROR;
-    strcpy(temp[connection_num].route_name, arguments[0]);
-    temp[connection_num].initial_stop = malloc(sizeof(char) * (size_1 + 1));
-    if (temp[connection_num].initial_stop == NULL)
+    spec_connection->final_stop = malloc(sizeof(char) * (size_2 + 1));
+    if (spec_connection->final_stop == NULL)
         return ERROR;
-    temp[connection_num].final_stop = malloc(sizeof(char) * (size_2 + 1));
-    if (temp[connection_num].final_stop == NULL)
-        return ERROR;
-    strcpy(temp[connection_num].initial_stop, arguments[1]);
-    strcpy(temp[connection_num].final_stop, arguments[2]);
-    temp[connection_num].cost = atof(arguments[3]);
-    temp[connection_num].duration = atof(arguments[4]);
-    temp[connection_num].ended = FALSE;
-    *connections = temp;
-    /*to update route's cost and duration*/
-    (*routes)[route_index].cost += (*connections)[connection_num].cost;
-    (*routes)[route_index].duration += (*connections)[connection_num].duration;
+    strcpy(spec_connection->initial_stop, arguments[1]);
+    strcpy(spec_connection->final_stop, arguments[2]);
+    spec_connection -> cost = atof(arguments[3]);
+    spec_connection -> duration = atof(arguments[4]);
+    (*routes)[route_index].cost += spec_connection->cost;
+    (*routes)[route_index].duration += spec_connection->duration;
     return TRUE;
 }
 
@@ -746,15 +757,20 @@ int create_connection(char **arguments, Route **routes,
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
 void add_route_information(char **arguments, Route **routes, 
-                           int i, int connection_num, int size_1, int size_2) {
+                           int i, int size_1, int size_2, 
+                           Connection spec_connection) {
 
+    Linked *node = malloc(sizeof(Linked));
     (*routes)[i].stops_number = 2; /*since it's the first connection of the route*/
     (*routes)[i].first_stop = malloc(sizeof(char) * (size_1 + 1));
     (*routes)[i].last_stop = malloc(sizeof(char) * (size_2 + 1));
     strcpy((*routes)[i].first_stop, arguments[1]);
     strcpy((*routes)[i].last_stop, arguments[2]);
-    (*routes)[i].start_index = connection_num;
-    (*routes)[i].end_index = connection_num;
+    node -> spec_connection = spec_connection;
+    node -> next = NULL;
+    node -> prev = NULL;
+    (*routes)[i].first_connection = node;
+    (*routes)[i].last_connection = node;
 }
 
 /*------------------------------------------------------------------------------
@@ -764,48 +780,31 @@ void add_route_information(char **arguments, Route **routes,
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
 void change_route_information(char **args, Route **routes,
-                              Connection **connections, int i, int add_end, 
-                              int connection_num, int size) {
-
-    int j;
-    (*routes)[i].stops_number++;
+                              int route_index, int add_end, 
+                              int size, Connection spec_connection) {
+    Linked *node = malloc(sizeof(Linked));
+    Linked *aux;
+    (*routes)[route_index].stops_number++;
+    node -> spec_connection = spec_connection;
     if (add_end) { /*if we add the connection to the end of the route*/
-
-        free((*routes)[i].last_stop);
-        (*routes)[i].last_stop = malloc(sizeof(char) * (size + 1));
-        strcpy((*routes)[i].last_stop, args[2]);
-        (*routes)[i].end_index = connection_num; /*update route's end*/
-
-        for (j = connection_num-1; j >= 0; j--) {
-            if ((*connections)[j].ended == TRUE)
-                continue;
-            else if (strcmp((*connections)[j].final_stop, 
-            args[1]) == EQUAL) {
-                /* when we find the last connection, we update the index to 
-                the new one, and the new one we create the index to the 
-                previous connection                                           */
-                (*connections)[j].next_index = connection_num;
-                (*connections)[connection_num].prev_index = j;
-                break;
-            }
-        }
+        free((*routes)[route_index].last_stop);
+        (*routes)[route_index].last_stop = malloc(sizeof(char) * (size + 1));
+        strcpy((*routes)[route_index].last_stop, args[2]);
+        aux = (*routes)[route_index].last_connection;
+        aux -> next = node;
+        node -> prev = aux;
+        node -> next = NULL;
+        (*routes)[route_index].last_connection = node;
     }
     else { /*if we add the connection to the beginning of the route*/
-        free((*routes)[i].first_stop);
-        (*routes)[i].first_stop = malloc(sizeof(char) * (size + 1));
-        strcpy((*routes)[i].first_stop, args[1]);
-        (*routes)[i].start_index = connection_num;
-        for (j = connection_num-1; j >= 0; j--) {
-            if ((*connections)[j].ended == TRUE)
-                continue;
-            else if (strcmp((*connections)[j].initial_stop, 
-            args[2]) == EQUAL) {
-                /*the opposite to the add to end case*/
-                (*connections)[j].prev_index = connection_num;
-                (*connections)[connection_num].next_index = j;
-                break;
-            }
-        }
+        free((*routes)[route_index].first_stop);
+        (*routes)[route_index].first_stop = malloc(sizeof(char) * (size + 1));
+        strcpy((*routes)[route_index].first_stop, args[1]);
+        aux = (*routes)[route_index].first_connection;
+        aux -> prev = node;
+        node -> next = aux;
+        node -> prev = NULL;
+        (*routes)[route_index].first_connection = node;
     }
 }
 
@@ -829,10 +828,14 @@ int is_valid_connection(char **arguments,
     if (!find_stops(arguments, stops, stop_num))
         return FALSE;
 
-    if (((*routes)[*route_index].start_index == -1)||
-        (strcmp((*routes)[*route_index].last_stop, arguments[1]) == EQUAL) ||
+    if ((*routes)[*route_index].stops_number == 0) {
+        exists = TRUE;
+    }
+    else {
+        if ((strcmp((*routes)[*route_index].last_stop, arguments[1]) == EQUAL) ||
         (strcmp((*routes)[*route_index].first_stop, arguments[2]) == EQUAL)) {
             exists = TRUE;
+        }
     }
     if (!exists) {
         printf("link cannot be associated with bus line.\n");
@@ -928,7 +931,7 @@ void bubble_sort(Route *routes, int *list_of_routes, int len) {
  *         is added, the old position otherwise
 ------------------------------------------------------------------------------*/
 int check_first_and_last(Stop spec_stop, Route spec_route, int j,
-                          int list_of_routes[], int pos) {
+                          int *list_of_routes, int pos) {
 
     if ((strcmp(spec_stop.name, spec_route.first_stop) == EQUAL) || 
         (strcmp(spec_stop.name, spec_route.last_stop) == EQUAL)) {
