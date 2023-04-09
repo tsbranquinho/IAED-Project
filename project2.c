@@ -128,9 +128,9 @@ void handle_commands(Stop *stops,
             case 'i':
                 command_i(&stops, routes, *stop_num, *route_num);
                 break;
-            /*case 'a':
+            case 'a':
                 free_memory(stops, routes, ptr_stop, ptr_route);
-                break;*/
+                break;
             case 'r':
                 command_r(line, &routes, ptr_route);
                 break;
@@ -152,7 +152,7 @@ int parser(char line[], char ***arguments, int max_arguments) {
     int space = FALSE, quotation = FALSE, arg_number = 0, j = 0;
     *arguments = malloc(max_arguments*sizeof(char*));
     for (i = 0; i < max_arguments; i++) {
-        (*arguments)[i] = malloc(BUFFER*sizeof(char));
+        (*arguments)[i] = malloc(BUF*sizeof(char));
     }
 
     if (line[0] == '\n') {
@@ -411,6 +411,64 @@ void command_r(char line[], Route **routes, int *route_num) {
     free_arguments(arguments, arg_number);
 }
 
+/*void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int route_num) {
+    char **arguments = NULL;
+    int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
+    int stop_index = 0, exists = FALSE, i; 
+    for (i = 0; i < *stop_num; i++) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+            stop_index = i;
+            exists = TRUE;
+            break;
+        }
+    }
+    if (!exists) {
+        printf("%s: no such stop.\n", arguments[0]);
+    }
+    for (i = 0; i < route_num; i++) {
+        int temp_duration = 0, temp_cost = 0, right_stop = FALSE;;
+        Linked *aux = (*routes)[i].first_connection;
+        Linked *next = NULL;
+        Linked *first = NULL;
+        while (aux != NULL) {
+            next = aux->next;
+            if (strcmp(aux ->spec_connection.initial_stop, arguments[0] == EQUAL)) {
+                if (!right_stop)
+                    first = aux;
+                right_stop = TRUE;
+                temp_cost += aux ->spec_connection.cost;
+                temp_duration += aux ->spec_connection.duration;
+                if (aux->spec_connection.route_name != NULL)
+                    free(current->spec_connection.route_name);
+                if (aux->spec_connection.initial_stop != NULL)
+                    free(current->spec_connection.initial_stop);
+                if (aux->spec_connection.final_stop != NULL)
+                    free(current->spec_connection.final_stop);
+                free(aux);
+            }
+            else if (strcmp(aux ->spec_connection.final_stop, arguments[0] == EQUAL)) {
+                if (!right_stop)
+                    first = aux;
+                right_stop = TRUE;
+                temp_cost += aux ->spec_connection.cost;
+                temp_duration += aux ->spec_connection.duration;
+                if (aux->spec_connection.route_name != NULL)
+                    free(current->spec_connection.route_name);
+                if (aux->spec_connection.initial_stop != NULL)
+                    free(current->spec_connection.initial_stop);
+                if (aux->spec_connection.final_stop != NULL)
+                    free(current->spec_connection.final_stop);
+                free(aux);
+            }
+            else if (right_stop) {
+                right_stop = FALSE;
+
+            }
+            aux = next;
+                
+        }
+    }
+}*/
 /*void command_e(char line[], Stop **stops, int *stop_num, Route **routes,
                int route_num) {
     char **arguments = NULL;
