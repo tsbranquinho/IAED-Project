@@ -383,9 +383,7 @@ void command_r(char line[], Route **routes, int *route_num) {
     int route_index = 0, exists = FALSE, i;
 
     for (i = 0; i < *route_num; i++) {
-        if ((*routes)[i].name == NULL)
-            continue;
-        else if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
             route_index = i;
             exists = TRUE;
             break;
@@ -403,7 +401,7 @@ void command_r(char line[], Route **routes, int *route_num) {
             free_linked_list((*routes)[route_index].first_connection);
         }
 
-        /*for (i = route_index; i < *route_num-1; i++) {
+        for (i = route_index; i < *route_num-1; i++) {
             (*routes)[i] = (*routes)[i+1];
         }
         free((*routes)[*route_num-1].name);
@@ -413,12 +411,7 @@ void command_r(char line[], Route **routes, int *route_num) {
             free_linked_list((*routes)[*route_num-1].first_connection);
         }
         (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
-        (*route_num)--;*/
-        (*routes)[route_index].name = NULL;
-        (*routes)[route_index].first_stop = NULL;
-        (*routes)[route_index].last_stop = NULL;
-        (*routes)[route_index].first_connection = NULL;
-        (*routes)[route_index].stops_number = 0;
+        (*route_num)--;
     
     }
     free_arguments(arguments, arg_number);
@@ -595,10 +588,7 @@ int get_stops_route(char **arguments,
     Linked *aux;
 
     for (i = 0; i < route_num; i++) {
-        if ((*routes)[i].name == NULL) {
-            continue;
-        }
-        else if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
 
             exists = TRUE;
 
@@ -634,9 +624,7 @@ void get_inverted_stops_route(char **arguments,
 
     /*it's the same as the function before, but we go from end to beginning*/
     for (i = 0; i < route_num; i++) {
-        if ((*routes)[i].name == NULL)
-            continue;
-        else if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
             if ((*routes)[i].stops_number == 0)
                 break;
 
