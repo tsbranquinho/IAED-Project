@@ -12,7 +12,7 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 # Evaluation
 
-2023-04-07T16:36:25
+2023-04-09T09:43:43
 
 ## Test 1: [+ Accepted+].
 ## Test 2: [+ Accepted+].
@@ -70,7 +70,8 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 ## Test 23: [+ Accepted+].
 ## Test 24: [- Command terminated by signal (6: SIGABRT)-].
 
-## Test 25: [- Command terminated by signal (6: SIGABRT)-].
+## Test 25: [- Wrong Answer-].
+
 
 ## Test 26: [- Command terminated by signal (6: SIGABRT)-].
 
@@ -95,179 +96,177 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 
 ```
-==15036== Memcheck, a memory error detector
-==15036== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==15036== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
-==15036== Command: ./proj.out
-==15036== 
-==15036== Invalid write of size 4
-==15036==    at 0x109F1D: check_first_and_last (project2.c:935)
-==15036==    by 0x109F1D: command_i (project2.c:360)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f92d80 is 0 bytes after a block of size 16 alloc'd
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x109D3B: command_i (project2.c:352)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid write of size 4
-==15036==    at 0x109E33: command_i (project2.c:367)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f92d84 is 4 bytes after a block of size 16 alloc'd
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x109D3B: command_i (project2.c:352)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid read of size 4
-==15036==    at 0x109EB0: bubble_sort (project2.c:912)
-==15036==    by 0x109EB0: command_i (project2.c:375)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f92d80 is 0 bytes after a block of size 16 alloc'd
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x109D3B: command_i (project2.c:352)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid read of size 4
-==15036==    at 0x109EB4: bubble_sort (project2.c:911)
-==15036==    by 0x109EB4: command_i (project2.c:375)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f92d80 is 0 bytes after a block of size 16 alloc'd
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x109D3B: command_i (project2.c:352)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid read of size 4
-==15036==    at 0x109F60: print_routes_passing (project2.c:953)
-==15036==    by 0x109F60: command_i (project2.c:376)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f92d80 is 0 bytes after a block of size 16 alloc'd
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x109D3B: command_i (project2.c:352)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid read of size 4
-==15036==    at 0x109F99: print_routes_passing (project2.c:955)
-==15036==    by 0x109F99: command_i (project2.c:376)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f92d8c is 12 bytes after a block of size 16 alloc'd
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x109D3B: command_i (project2.c:352)
-==15036==    by 0x10BBB3: handle_commands (project2.c:132)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid read of size 1
-==15036==    at 0x4A608D0: __strcmp_sse2_unaligned (strcmp-sse2-unaligned.S:24)
-==15036==    by 0x10999E: command_r (project2.c:438)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f8ae60 is 0 bytes inside a block of size 10 free'd
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x1099B2: command_r (project2.c:440)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Block was alloc'd at
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x10AF22: create_connection (project2.c:720)
-==15036==    by 0x10B5F3: command_l (project2.c:313)
-==15036==    by 0x10BB86: handle_commands (project2.c:123)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid read of size 1
-==15036==    at 0x4839D20: strcmp (vg_replace_strmem.c:848)
-==15036==    by 0x10999E: command_r (project2.c:438)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4f8ae61 is 1 bytes inside a block of size 10 free'd
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x1099B2: command_r (project2.c:440)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Block was alloc'd at
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x10AF22: create_connection (project2.c:720)
-==15036==    by 0x10B5F3: command_l (project2.c:313)
-==15036==    by 0x10BB86: handle_commands (project2.c:123)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid free() / delete / delete[] / realloc()
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x10936C: free_memory (project2.c:72)
-==15036==    by 0x10BAE4: handle_commands (project2.c:102)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4d25900 is 0 bytes inside a block of size 10 free'd
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x1099B2: command_r (project2.c:440)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Block was alloc'd at
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x10AF22: create_connection (project2.c:720)
-==15036==    by 0x10B5F3: command_l (project2.c:313)
-==15036==    by 0x10BB86: handle_commands (project2.c:123)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid free() / delete / delete[] / realloc()
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x10937D: free_memory (project2.c:73)
-==15036==    by 0x10BAE4: handle_commands (project2.c:102)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4d25950 is 0 bytes inside a block of size 9 free'd
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x1099C4: command_r (project2.c:441)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Block was alloc'd at
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x10AF46: create_connection (project2.c:724)
-==15036==    by 0x10B5F3: command_l (project2.c:313)
-==15036==    by 0x10BB86: handle_commands (project2.c:123)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== Invalid free() / delete / delete[] / realloc()
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x109386: free_memory (project2.c:74)
-==15036==    by 0x10BAE4: handle_commands (project2.c:102)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Address 0x4d259a0 is 0 bytes inside a block of size 9 free'd
-==15036==    at 0x48369AB: free (vg_replace_malloc.c:530)
-==15036==    by 0x1099D1: command_r (project2.c:442)
-==15036==    by 0x10BABE: handle_commands (project2.c:139)
-==15036==    by 0x109198: main (project2.c:39)
-==15036==  Block was alloc'd at
-==15036==    at 0x483577F: malloc (vg_replace_malloc.c:299)
-==15036==    by 0x10AF65: create_connection (project2.c:727)
-==15036==    by 0x10B5F3: command_l (project2.c:313)
-==15036==    by 0x10BB86: handle_commands (project2.c:123)
-==15036==    by 0x109198: main (project2.c:39)
-==15036== 
-==15036== 
-==15036== HEAP SUMMARY:
-==15036==     in use at exit: 224 bytes in 1 blocks
-==15036==   total heap usage: 595 allocs, 678 frees, 12,946,267 bytes allocated
-==15036== 
-==15036== LEAK SUMMARY:
-==15036==    definitely lost: 224 bytes in 1 blocks
-==15036==    indirectly lost: 0 bytes in 0 blocks
-==15036==      possibly lost: 0 bytes in 0 blocks
-==15036==    still reachable: 0 bytes in 0 blocks
-==15036==         suppressed: 0 bytes in 0 blocks
-==15036== Rerun with --leak-check=full to see details of leaked memory
-==15036== 
-==15036== For counts of detected and suppressed errors, rerun with: -v
-==15036== ERROR SUMMARY: 582 errors from 11 contexts (suppressed: 0 from 0)
+==25615== Memcheck, a memory error detector
+==25615== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25615== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==25615== Command: ./proj.out
+==25615== 
+==25615== Invalid read of size 8
+==25615==    at 0x109945: free_linked_list (project2.c:46)
+==25615==    by 0x109945: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b2e0 is 0 bytes inside a block of size 56 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x10993C: free_linked_list (project2.c:52)
+==25615==    by 0x10993C: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10B6A1: add_route_information (project2.c:763)
+==25615==    by 0x10B6A1: command_l (project2.c:314)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid read of size 8
+==25615==    at 0x109948: free_linked_list (project2.c:45)
+==25615==    by 0x109948: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b308 is 40 bytes inside a block of size 56 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x10993C: free_linked_list (project2.c:52)
+==25615==    by 0x10993C: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10B6A1: add_route_information (project2.c:763)
+==25615==    by 0x10B6A1: command_l (project2.c:314)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid free() / delete / delete[] / realloc()
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x109955: free_linked_list (project2.c:47)
+==25615==    by 0x109955: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b1f0 is 0 bytes inside a block of size 10 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x109955: free_linked_list (project2.c:47)
+==25615==    by 0x109955: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10AD6F: create_connection (project2.c:734)
+==25615==    by 0x10B362: command_l (project2.c:308)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid read of size 8
+==25615==    at 0x109956: free_linked_list (project2.c:48)
+==25615==    by 0x109956: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b2e8 is 8 bytes inside a block of size 56 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x10993C: free_linked_list (project2.c:52)
+==25615==    by 0x10993C: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10B6A1: add_route_information (project2.c:763)
+==25615==    by 0x10B6A1: command_l (project2.c:314)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid free() / delete / delete[] / realloc()
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x109963: free_linked_list (project2.c:49)
+==25615==    by 0x109963: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b240 is 0 bytes inside a block of size 9 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x109963: free_linked_list (project2.c:49)
+==25615==    by 0x109963: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10AD93: create_connection (project2.c:738)
+==25615==    by 0x10B362: command_l (project2.c:308)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid read of size 8
+==25615==    at 0x109964: free_linked_list (project2.c:50)
+==25615==    by 0x109964: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b2f0 is 16 bytes inside a block of size 56 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x10993C: free_linked_list (project2.c:52)
+==25615==    by 0x10993C: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10B6A1: add_route_information (project2.c:763)
+==25615==    by 0x10B6A1: command_l (project2.c:314)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid free() / delete / delete[] / realloc()
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x109934: free_linked_list (project2.c:51)
+==25615==    by 0x109934: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b290 is 0 bytes inside a block of size 9 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x109934: free_linked_list (project2.c:51)
+==25615==    by 0x109934: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10ADB0: create_connection (project2.c:741)
+==25615==    by 0x10B362: command_l (project2.c:308)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== Invalid free() / delete / delete[] / realloc()
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x10993C: free_linked_list (project2.c:52)
+==25615==    by 0x10993C: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Address 0x4f8b2e0 is 0 bytes inside a block of size 56 free'd
+==25615==    at 0x48369AB: free (vg_replace_malloc.c:530)
+==25615==    by 0x10993C: free_linked_list (project2.c:52)
+==25615==    by 0x10993C: command_r (project2.c:424)
+==25615==    by 0x10B80D: handle_commands (project2.c:135)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615==  Block was alloc'd at
+==25615==    at 0x483577F: malloc (vg_replace_malloc.c:299)
+==25615==    by 0x10B6A1: add_route_information (project2.c:763)
+==25615==    by 0x10B6A1: command_l (project2.c:314)
+==25615==    by 0x10B8A6: handle_commands (project2.c:121)
+==25615==    by 0x10914E: main (project2.c:37)
+==25615== 
+==25615== 
+==25615== HEAP SUMMARY:
+==25615==     in use at exit: 1,176 bytes in 56 blocks
+==25615==   total heap usage: 598 allocs, 598 frees, 12,925,563 bytes allocated
+==25615== 
+==25615== LEAK SUMMARY:
+==25615==    definitely lost: 112 bytes in 2 blocks
+==25615==    indirectly lost: 1,064 bytes in 54 blocks
+==25615==      possibly lost: 0 bytes in 0 blocks
+==25615==    still reachable: 0 bytes in 0 blocks
+==25615==         suppressed: 0 bytes in 0 blocks
+==25615== Rerun with --leak-check=full to see details of leaked memory
+==25615== 
+==25615== For counts of detected and suppressed errors, rerun with: -v
+==25615== ERROR SUMMARY: 112 errors from 8 contexts (suppressed: 0 from 0)
 
 ```
 
 
-Your code will not be reevaluated if you submit before 2023-04-07 16:46:25 @ Lisbon, Portugal. You need to wait 10 minute(s).
+Your code will not be reevaluated if you submit before 2023-04-09 09:53:43 @ Lisbon, Portugal. You need to wait 10 minute(s).
 
