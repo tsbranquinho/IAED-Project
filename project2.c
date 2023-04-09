@@ -128,15 +128,15 @@ void handle_commands(Stop *stops,
             case 'i':
                 command_i(&stops, routes, *stop_num, *route_num);
                 break;
-            case 'a':
+            /*case 'a':
                 free_memory(stops, routes, ptr_stop, ptr_route);
-                break;
+                break;*/
             case 'r':
                 command_r(line, &routes, ptr_route);
                 break;
-            case 'e':
-                command_e(line, /*&stops,*/ ptr_stop, &routes/*, *route_num*/);
-                break;
+            /*case 'e':
+                command_e(line, &stops, ptr_stop, &routes, *route_num);
+                break;*/
         }
     }
 }
@@ -411,15 +411,18 @@ void command_r(char line[], Route **routes, int *route_num) {
     free_arguments(arguments, arg_number);
 }
 
-void command_e(char line[], /*Stop **stops,*/ int *stop_num, Route **routes/*,*/
-               /*int route_num*/) {
+/*void command_e(char line[], Stop **stops, int *stop_num, Route **routes,
+               int route_num) {
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
-    int /*stop_index = 0,*/ exists = FALSE, i;
+    int stop_index = 0, exists = FALSE, i; 
+    int right_stop = FALSE, temp_duration = 0, temp_cost = 0;
+    int temp_initial_stop = NULL, temp_final_stop = NULL;
+    int is_first = FALSE, is_last = FALSE;
 
     for (i = 0; i < *stop_num; i++) {
         if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
-            /*stop_index = i;*/
+            stop_index = i;
             exists = TRUE;
             break;
         }
@@ -427,16 +430,122 @@ void command_e(char line[], /*Stop **stops,*/ int *stop_num, Route **routes/*,*/
     if (!exists) {
         printf("%s: no such stop.\n", arguments[0]);
     }
-    /*else {
+    else {
+        for (i = 0; i < route_num; i++) {
+            if ((*routes)[i].stops_number == 0) {
+                continue;
+            }
+            else {
+                Linked *aux = (*routes)[i].first_connection;
+                Linked *start_point;
+                Linked *stop_point;
+                Linked *second_aux = (*routes)[i].first_connection;
+                int link_to_start = TRUE;
+                while (aux != NULL) {
+                    if (strcmp((*stops)[stop_index].name, aux->spec_connection.initial_stop) == EQUAL) {
+                        if ((aux = (*routes)[i].first_connection) || right_stop) { 
+                            is_first = TRUE;
+                            right_stop = TRUE;
+                        }
+                        if (temp_initial_stop == NULL) { 
+                            temp_initial_stop = aux->spec_connection.final_stop;
+                            start_point = aux;
+                        }
+                        else {
+                            temp_final_stop = aux->spec_connection.final_stop;
+                            stop_point = aux;
+                        }
+                        temp_duration += aux->spec_connection.duration;
+                        temp_cost += aux->spec_connection.cost;
+                    }
+                    else if (strcmp((*stops)[stop_index].name, aux->spec_connection.final_stop) == EQUAL) {
+                        if (aux = (*routes)[i].last_connection) {
+                            is_last = TRUE;
+                            right_stop = TRUE;
+                        }
+                        if (temp_final_stop == NULL) {
+                            temp_final_stop = aux->spec_connection.initial_stop;
+                            stop_point = aux;
+                        }
+                        else {
+                            temp_initial_stop = aux->spec_connection.initial_stop;
+                            start_point = aux;
+                        }
+                        temp_duration += aux->spec_connection.duration;
+                        temp_cost += aux->spec_connection.cost;
+                    }
+                    else {
+                        Connection temp;
+                        Linked *next;
+                        char new_line[] = {(*routes)[i].name, temp_initial_stop,
+                                             temp_final_stop, temp_duration, 
+                                             temp_cost};
+                        int size_1 = strlen(temp_initial_stop);
+                        int size_2 = strlen(temp_final_stop);
+                        right_stop = FALSE;
+                        create_connection(new_line,(*routes), i, size_1, size_2, &temp);
+                        (*routes)[i].cost -= temp.cost;
+                        (*routes)[i].duration -= temp.duration;
+                        (*routes)[i].stops_number--;
+                        if (is_first) {
+                            (*routes)[i].cost -= temp_cost;
+                            (*routes)[i].duration -= temp_duration;
+                            free((*routes)[i].first_stop);
+                            (*routes)[i].first_stop = malloc(sizeof(char) * (strlen(temp_initial_stop) + 1));
+                            (*routes)[i].first_stop = temp_initial_stop;
+                            (*routes)[i].first_connection = stop_point->next;
+                        }
+                        while (TRUE) {
+                            if (is_first) {
+                                if (second_aux == stop_point) 
+                            }
+                            else
+                                if (second_aux == start_point) {
+                                    link_to_start = TRUE;
+                                    free(start_point -> spec_connection.initial_stop);
+                                    free(start_point -> spec_connection.final_stop);
+                                    free(start_point -> spec_connection.route_name);
+                                    start_point->spec_connection = temp;
+                                }
+                                if (second_aux == stop_point) {
+                                    link_to_start = FALSE;
+                                    start_point->next = stop_point->next;
+                                    stop_point->next->prev = start_point;
+                                    free(stop_point -> spec_connection.initial_stop);
+                                    free(stop_point -> spec_connection.final_stop);
+                                    free(stop_point -> spec_connection.route_name);
+                                    free(stop_point);
+                                    break;
+                                }
+                                if (link_to_start) {
+                                    next = second_aux->next;
+                                    free(second_aux -> spec_connection.initial_stop);
+                                    free(second_aux -> spec_connection.final_stop);
+                                    free(second_aux -> spec_connection.route_name);
+                                    free(second_aux);
+                                    second_aux = next;
+                                }
+                                else 
+                                    second_aux = second_aux->next;
+                        }
+                    }
+                    aux = aux->next;
+                }
+            }
+        }
+        
+        
+        
+        
         free((*stops)[stop_index].name);
         for (i = stop_index; i < *stop_num-1; i++) {
             (*stops)[i] = (*stops)[i+1];
         }
         (*stops) = realloc((*stops), sizeof(Stop) * (*stop_num-1));
         (*stop_num)--;
-    }*/
+    }
     free_arguments(arguments, arg_number);
-}
+} */
 
 /*------------------------------------------------------------------------------
  * Function: add_routes_passing
