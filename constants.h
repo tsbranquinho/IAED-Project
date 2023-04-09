@@ -11,6 +11,7 @@
 #define INVERSO_LEN 7 /*length of the word inverso                            */
 #define ROUTE_INCREMENT 100 /*increment of the allocs for routes              */
 #define STOP_INCREMENT 1000 /*increment of the allocs for stops               */
+#define BUF 10000
 #define BUFFER 65535 /*maximum number of characters in a line                 */
 #define INVERSO "inverso" /*the word inverso*/
 
