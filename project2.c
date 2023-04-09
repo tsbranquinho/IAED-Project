@@ -404,12 +404,6 @@ void command_r(char line[], Route **routes, int *route_num) {
         for (i = route_index; i < *route_num-1; i++) {
             (*routes)[i] = (*routes)[i+1];
         }
-        free((*routes)[*route_num-1].name);
-        if ((*routes)[*route_num-1].stops_number != 0) {
-            free((*routes)[*route_num-1].first_stop);
-            free((*routes)[*route_num-1].last_stop);
-            free_linked_list((*routes)[*route_num-1].first_connection);
-        }
         (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
         (*route_num)--;
     
@@ -668,9 +662,7 @@ int is_inverted(char argument[]) {
 ------------------------------------------------------------------------------*/
 void print_route_description(Route spec_route) {
 
-    if (spec_route.name == NULL)
-        return;
-    else if (spec_route.stops_number == 0) {
+    if (spec_route.stops_number == 0) {
         printf("%s %d %.2f %.2f\n", spec_route.name,
                 spec_route.stops_number, spec_route.cost,
                 spec_route.duration);
