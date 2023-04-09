@@ -152,7 +152,7 @@ int parser(char line[], char ***arguments, int max_arguments) {
     int space = FALSE, quotation = FALSE, arg_number = 0, j = 0;
     *arguments = malloc(max_arguments*sizeof(char*));
     for (i = 0; i < max_arguments; i++) {
-        (*arguments)[i] = malloc(BUF*sizeof(char));
+        (*arguments)[i] = malloc(length*sizeof(char));
     }
 
     if (line[0] == '\n') {
