@@ -15,15 +15,29 @@
 #define BUFFER 65535 /*maximum number of characters in a line                 */
 #define INVERSO "inverso" /*the word inverso*/
 
+typedef struct { /*struct of connections*/
+    char *route_name;
+    char *initial_stop;
+    char *final_stop;
+    double cost;
+    double duration;
+} Connection;
+
+typedef struct Linked {
+    Connection spec_connection;
+    struct Linked *next;
+    struct Linked *prev;
+} Linked;
+
 typedef struct { /*struct of routes*/
     char *name;
     char *first_stop;
     char *last_stop;
-    int start_index;
-    int end_index;
     double cost;
     double duration;
     int stops_number;
+    Linked *first_connection;
+    Linked *last_connection;
 } Route;
 
 typedef struct { /*struct of stops*/
@@ -32,16 +46,5 @@ typedef struct { /*struct of stops*/
     double longitude;
     int routes_passing;
 } Stop;
-
-typedef struct { /*struct of connections*/
-    char *route_name;
-    char *initial_stop;
-    char *final_stop;
-    int next_index;
-    int prev_index;
-    int ended;
-    double cost;
-    double duration;
-} Connection;
 
 #endif /*constants*/
