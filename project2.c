@@ -133,6 +133,10 @@ void handle_commands(Stop *stops,
                 break;
             case 'r':
                 command_r(line, &routes, ptr_route);
+                break;
+            /*case 'e':
+                command_e(line, &stops, ptr_stop, &routes, *route_num);
+                break;*/
         }
     }
 }
@@ -372,6 +376,52 @@ void command_i(Stop **stops, Route *routes,
     }
 }
 
+void copy_route(Route *dest, Route *src) {
+    Linked *src_conn;
+    Linked *prev_dest_conn;
+    dest->name = malloc(strlen(src->name) + 1);
+    strcpy(dest->name, src->name);
+    if (src->stops_number != 0) {
+        dest->first_stop = malloc(strlen(src->first_stop) + 1);
+        strcpy(dest->first_stop, src->first_stop);
+        dest->last_stop = malloc(strlen(src->last_stop) + 1);
+        strcpy(dest->last_stop, src->last_stop);
+    }
+    else {
+        dest->first_stop = NULL;
+        dest->last_stop = NULL;
+    }
+    dest->cost = src->cost;
+    dest->duration = src->duration;
+    dest->stops_number = src->stops_number;
+
+    src_conn = src->first_connection;
+    prev_dest_conn = NULL;
+    while (src_conn != NULL) {
+        Linked *dest_conn = malloc(sizeof(Linked));
+        dest_conn->spec_connection.route_name = malloc(strlen(src_conn->spec_connection.route_name) + 1);
+        strcpy(dest_conn->spec_connection.route_name, src_conn->spec_connection.route_name);
+        dest_conn->spec_connection.initial_stop = malloc(strlen(src_conn->spec_connection.initial_stop) + 1);
+        strcpy(dest_conn->spec_connection.initial_stop, src_conn->spec_connection.initial_stop);
+        dest_conn->spec_connection.final_stop = malloc(strlen(src_conn->spec_connection.final_stop) + 1);
+        strcpy(dest_conn->spec_connection.final_stop, src_conn->spec_connection.final_stop);
+        dest_conn->spec_connection.cost = src_conn->spec_connection.cost;
+        dest_conn->spec_connection.duration = src_conn->spec_connection.duration;
+        dest_conn->next = NULL;
+
+        if (prev_dest_conn == NULL) {
+            dest->first_connection = dest_conn;
+        } 
+        else {
+            prev_dest_conn->next = dest_conn;
+        }
+        prev_dest_conn = dest_conn;
+
+        src_conn = src_conn->next;
+    }
+    dest->last_connection = prev_dest_conn;
+}
+
 void command_r(char line[], Route **routes, int *route_num) {
 
     char **arguments = NULL;
@@ -398,15 +448,47 @@ void command_r(char line[], Route **routes, int *route_num) {
         }
 
         for (i = route_index; i < *route_num-1; i++) {
-            (*routes)[i] = (*routes)[i+1];
+            copy_route(&(*routes)[i], &(*routes)[i+1]);
         }
-
+        free((*routes)[*route_num-1].name);
+        if ((*routes)[*route_num-1].stops_number != 0) {
+            free((*routes)[*route_num-1].first_stop);
+            free((*routes)[*route_num-1].last_stop);
+            free_linked_list((*routes)[*route_num-1].first_connection);
+        }
         (*routes) = realloc((*routes), sizeof(Route) * (*route_num-1));
         (*route_num)--;
     
     }
     free_arguments(arguments, arg_number);
 }
+
+/*void command_e(char line[], Stop **stops, int *stop_num, Route **routes, 
+               int route_num) {
+    char **arguments = NULL;
+    int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
+    int stop_index = 0, exists = FALSE, i;
+
+    for (i = 0; i < *stop_num; i++) {
+        if (strcmp((*routes)[i].name, arguments[0]) == EQUAL) {
+            stop_index = i;
+            exists = TRUE;
+            break;
+        }
+    }
+    if (!exists) {
+        printf("%s: no such stop.\n", arguments[0]);
+    }
+    else {
+        free((*stops)[stop_index].name);
+        for (i = stop_index; i < *stop_num-1; i++) {
+            (*stops)[i] = (*stops)[i+1];
+        }
+        (*stops) = realloc((*stops), sizeof(Stop) * (*stop_num-1));
+        (*stop_num)--;
+    }
+    free_arguments(arguments, arg_number);
+}*/
 
 /*------------------------------------------------------------------------------
  * Function: add_routes_passing
