@@ -12,7 +12,7 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 # Evaluation
 
-2023-04-10T16:19:49
+2023-04-10T17:13:06
 
 ## Test 1: [+ Accepted+].
 ## Test 2: [+ Accepted+].
@@ -22,44 +22,24 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 ## Test 6: [+ Accepted+].
 ## Test 7: [+ Accepted+].
 ## Test 8: [+ Accepted+].
-## Test 9: [- Wrong Answer-].
-
-
+## Test 9: [+ Accepted+].
 ## Test 10: [+ Accepted+].
 ## Test 11: [+ Accepted+].
-## Test 12: [- Wrong Answer-].
-
-
-## Test 13: [- Wrong Answer-].
-
-
-## Test 14: [- Wrong Answer-].
-
-
+## Test 12: [+ Accepted+].
+## Test 13: [+ Accepted+].
+## Test 14: [+ Accepted+].
 ## Test 15: [+ Accepted+].
 ## Test 16: [+ Accepted+].
-## Test 17: [- Wrong Answer-].
-
-
-## Test 18: [- Wrong Answer-].
-
-
-## Test 19: [- Wrong Answer-].
-
-
-## Test 20: [- Wrong Answer-].
-
-
+## Test 17: [+ Accepted+].
+## Test 18: [+ Accepted+].
+## Test 19: [+ Accepted+].
+## Test 20: [+ Accepted+].
 ## Test 21: [+ Accepted+].
 ## Test 22: [+ Accepted+].
 ## Test 23: [+ Accepted+].
 ## Test 24: [+ Accepted+].
-## Test 25: [- Wrong Answer-].
-
-
-## Test 26: [- Wrong Answer-].
-
-
+## Test 25: [+ Accepted+].
+## Test 26: [+ Accepted+].
 ## Test 27: [+ Accepted+].
 ## Test 28: [+ Accepted+].
 ## Test 29: [+ Accepted+].
@@ -68,30 +48,30 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 ## Test 32: [+ Accepted+].
 
 
-## Number of passed tests: 22/32
+## Number of passed tests: 32/32
 
 
 ## Valgrind Output:
 
 
 ```
-==25589== Memcheck, a memory error detector
-==25589== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==25589== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
-==25589== Command: ./proj.out
-==25589== 
-==25589== 
-==25589== HEAP SUMMARY:
-==25589==     in use at exit: 0 bytes in 0 blocks
-==25589==   total heap usage: 613 allocs, 613 frees, 20,377 bytes allocated
-==25589== 
-==25589== All heap blocks were freed -- no leaks are possible
-==25589== 
-==25589== For counts of detected and suppressed errors, rerun with: -v
-==25589== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==11496== Memcheck, a memory error detector
+==11496== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==11496== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==11496== Command: ./proj.out
+==11496== 
+==11496== 
+==11496== HEAP SUMMARY:
+==11496==     in use at exit: 0 bytes in 0 blocks
+==11496==   total heap usage: 657 allocs, 657 frees, 20,789 bytes allocated
+==11496== 
+==11496== All heap blocks were freed -- no leaks are possible
+==11496== 
+==11496== For counts of detected and suppressed errors, rerun with: -v
+==11496== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ```
 
 
-Your code will not be reevaluated if you submit before 2023-04-10 16:29:49 @ Lisbon, Portugal. You need to wait 10 minute(s).
+Your code will not be reevaluated if you submit before 2023-04-10 17:23:06 @ Lisbon, Portugal. You need to wait 10 minute(s).
 
