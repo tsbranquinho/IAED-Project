@@ -440,6 +440,9 @@ void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int rou
                 if ((*routes)[i].first_connection->next == NULL) {
                     free((*routes)[i].first_stop);
                     (*routes)[i].first_stop = NULL;
+                    free((*routes)[i].first_connection->spec_connection.route_name);
+                    free((*routes)[i].first_connection->spec_connection.initial_stop);
+                    free((*routes)[i].first_connection->spec_connection.final_stop);
                     free((*routes)[i].first_connection);
                     (*routes)[i].first_connection = NULL;
                     (*routes)[i].stops_number = 0;
@@ -458,6 +461,7 @@ void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int rou
                 free((*routes)[i].first_connection->prev);
                 (*routes)[i].first_connection->prev = NULL;
             }
+            get_stops_number(routes, i);
             if ((*routes)[i].stops_number == 0) {
                 continue;
             }
@@ -468,6 +472,9 @@ void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int rou
                     if ((*routes)[i].last_connection -> prev == NULL) {
                         free((*routes)[i].last_stop);
                         (*routes)[i].last_stop = NULL;
+                        free((*routes)[i].last_connection->spec_connection.route_name);
+                        free((*routes)[i].last_connection->spec_connection.initial_stop);
+                        free((*routes)[i].last_connection->spec_connection.final_stop);
                         free((*routes)[i].last_connection);
                         (*routes)[i].last_connection = NULL;
                         (*routes)[i].stops_number = 0;
@@ -488,6 +495,17 @@ void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int rou
                 }
                 get_stops_number(routes, i);
             }
+            if ((*routes)[i].stops_number == 0) {
+                continue;
+            }
+            /*else {
+                Linked *aux = (*routes)[i].first_connection;
+                Connection spec_connection;
+                int temp_duration = 0, temp_cost = 0;
+                while (aux != NULL) {
+                    
+                }
+            }*/
         }
     }
     free((*stops)[stop_index].name);
@@ -500,7 +518,11 @@ void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int rou
 
 void get_stops_number(Route **routes, int route_index) {
 
-    Linked *aux = (*routes)[route_index].first_connection;
+    Linked *aux = NULL;
+    if ((*routes)[route_index].stops_number == 0) {
+        return;
+    }
+    aux = (*routes)[route_index].first_connection;
     (*routes)[route_index].stops_number = 1;
     while(aux != NULL) {
         (*routes)[route_index].stops_number++;
