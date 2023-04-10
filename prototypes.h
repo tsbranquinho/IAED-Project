@@ -30,5 +30,6 @@ void free_arguments(char **arguments, int arg_number);
 void free_memory(Stop *stops, Route *routes, int *stop_num, int *route_num);
 void command_r(char line[], Route **routes, int *route_num);
 void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int route_num);
+void get_stops_number(Route **routes, int route_index); 
 
 #endif /*prototypes*/
