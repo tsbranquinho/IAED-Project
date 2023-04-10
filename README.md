@@ -12,7 +12,7 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 
 # Evaluation
 
-2023-04-10T15:42:04
+2023-04-10T16:19:49
 
 ## Test 1: [+ Accepted+].
 ## Test 2: [+ Accepted+].
@@ -64,35 +64,34 @@ Informações detalhadas sobre o processo de submissão estão disponíveis em [
 ## Test 28: [+ Accepted+].
 ## Test 29: [+ Accepted+].
 ## Test 30: [+ Accepted+].
-## Test 31: [- Command terminated by signal (11: SIGSEGV)-].
-
+## Test 31: [+ Accepted+].
 ## Test 32: [+ Accepted+].
 
 
-## Number of passed tests: 21/32
+## Number of passed tests: 22/32
 
 
 ## Valgrind Output:
 
 
 ```
-==9616== Memcheck, a memory error detector
-==9616== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==9616== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
-==9616== Command: ./proj.out
-==9616== 
-==9616== 
-==9616== HEAP SUMMARY:
-==9616==     in use at exit: 0 bytes in 0 blocks
-==9616==   total heap usage: 613 allocs, 613 frees, 20,377 bytes allocated
-==9616== 
-==9616== All heap blocks were freed -- no leaks are possible
-==9616== 
-==9616== For counts of detected and suppressed errors, rerun with: -v
-==9616== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25589== Memcheck, a memory error detector
+==25589== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25589== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==25589== Command: ./proj.out
+==25589== 
+==25589== 
+==25589== HEAP SUMMARY:
+==25589==     in use at exit: 0 bytes in 0 blocks
+==25589==   total heap usage: 613 allocs, 613 frees, 20,377 bytes allocated
+==25589== 
+==25589== All heap blocks were freed -- no leaks are possible
+==25589== 
+==25589== For counts of detected and suppressed errors, rerun with: -v
+==25589== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 ```
 
 
-Your code will not be reevaluated if you submit before 2023-04-10 15:52:04 @ Lisbon, Portugal. You need to wait 10 minute(s).
+Your code will not be reevaluated if you submit before 2023-04-10 16:29:49 @ Lisbon, Portugal. You need to wait 10 minute(s).
 
