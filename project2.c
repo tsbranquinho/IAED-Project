@@ -493,19 +493,48 @@ void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int rou
                     free((*routes)[i].last_connection->next);
                     (*routes)[i].last_connection->next = NULL;
                 }
-                get_stops_number(routes, i);
             }
+            get_stops_number(routes, i);
             if ((*routes)[i].stops_number == 0) {
                 continue;
             }
-            /*else {
-                Linked *aux = (*routes)[i].first_connection;
-                Connection spec_connection;
-                int temp_duration = 0, temp_cost = 0;
-                while (aux != NULL) {
-                    
+            else {
+                Linked *current = (*routes)[i].first_connection;
+                while (current != (*routes)[i].last_connection) {
+                    Connection new_connection;
+                    Linked *aux = current->next; 
+                    if (strcmp(current->spec_connection.final_stop, (*stops)[stop_index].name) == EQUAL) {
+                        new_connection.duration = current -> spec_connection.duration + current -> next -> spec_connection.duration;
+                        new_connection.cost = current -> spec_connection.cost + current -> next -> spec_connection.cost;
+                        new_connection.initial_stop = malloc (sizeof(char) * (strlen(current -> spec_connection.initial_stop) + 1));
+                        strcpy(new_connection.initial_stop, current -> spec_connection.initial_stop);
+                        new_connection.final_stop = malloc (sizeof(char) * (strlen(current -> next -> spec_connection.final_stop) + 1));
+                        strcpy(new_connection.final_stop, current -> next -> spec_connection.final_stop);
+                        new_connection.route_name = malloc (sizeof(char) * (strlen(current -> spec_connection.route_name) + 1));
+                        strcpy(new_connection.route_name, current -> spec_connection.route_name);
+                        free(current -> spec_connection.initial_stop);
+                        free(current -> spec_connection.final_stop);
+                        free(current -> spec_connection.route_name);
+                        current -> spec_connection = new_connection;
+                        if (current -> prev != NULL)
+                            current -> prev -> next = current;
+                        else
+                            (*routes)[i].first_connection = current;
+                        if (current -> next -> next != NULL)
+                            current -> next -> next -> prev = current;
+                        else
+                            (*routes)[i].last_connection = current;
+                        current->next = current->next->next;
+                        free(aux -> spec_connection.initial_stop);
+                        free(aux -> spec_connection.final_stop);
+                        free(aux -> spec_connection.route_name);
+                        free(aux);
+                    }
+                    else 
+                        current = current -> next;
                 }
-            }*/
+            }
+            get_stops_number(routes, i);
         }
     }
     free((*stops)[stop_index].name);
