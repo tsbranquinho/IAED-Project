@@ -32,5 +32,12 @@ void free_linked(Linked *head);
 void command_r(char line[], Route **routes, int *route_num);
 void command_e(char line[], Stop **stops, int *stop_num, Route **routes, int route_num);
 void get_stops_number(Route **routes, int route_index);
+int add_route_to_list(int *list_of_routes, int pos, int route_num, int stop_num, Stop **stops, Route *routes);
+void remove_route(Route **routes, int route_index, int *route_num);
+void remove_stop(Stop **stops, int stop_index, int *stop_num);
+int remove_from_beginning(Route **routes, int i);
+int remove_from_end(Route **routes, int i);
+void remove_from_middle(Stop **stops, Route **routes, int i, int stop_index);
+Connection join_connections(Linked *current, Linked *aux);
 
 #endif /*prototypes*/
