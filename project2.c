@@ -240,9 +240,9 @@ void command_r(char line[], Route **routes, int *route_num) {
 
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
-    int route_index = 0;
+    int route_index;
 
-    route_index = find_route(arguments, routes, route_index);
+    route_index = find_route(arguments, routes, *route_num);
     if (route_index != NO_ROUTE)
         remove_route(routes, route_index, route_num);
     free_arguments(arguments, arg_number);
