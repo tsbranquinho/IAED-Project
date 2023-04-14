@@ -72,12 +72,12 @@ void print_routes_passing(int pos, int list_of_routes[],
 }
 
 /*------------------------------------------------------------------------------
- * Function: add_route_to_list
- * Description: function that adds a route to the list of routes passing through
- *              a stop
+ * Function: add_route_to_array
+ * Description: function that adds indexes of the routes that go through a stop
+ *              to the array of routes 
  * Output: returns the number of routes passing through a stop
 ------------------------------------------------------------------------------*/
-int add_route_to_list(int *list_of_routes, int pos, 
+int add_route_to_array(int *list_of_routes, int pos, 
                        int route_num, int stop_num, Stop **stops, Route *routes) {
 
     int j;
