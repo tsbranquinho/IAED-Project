@@ -25,6 +25,9 @@ int parser(char line[], char ***arguments, int max_arguments) {
     int i, length = strlen(line);
     int space = FALSE, quotation = FALSE, arg_number = 0, j = 0;
     *arguments = malloc(max_arguments*sizeof(char*));
+    if (*arguments == NULL) {
+        return ERROR;
+    }
 
     for (i = 0; i < max_arguments; i++) {
         (*arguments)[i] = malloc(length*sizeof(char));
@@ -83,6 +86,10 @@ int command_p(char line[], Stop **stops,
     char **arguments = NULL;
     int max_arguments = 3;
     int exists, arg_number = parser(line, &arguments, max_arguments);
+    if (arg_number == ERROR) {
+        free_arguments(arguments, max_arguments);
+        return ERROR;
+    }
 
     switch (arg_number) {
         case 0:
@@ -125,6 +132,10 @@ int command_c(char line[], Route **routes,
     int max_arguments = 2, arg_number = parser(line, &arguments, max_arguments);
     int i, reverse_flag = FALSE;
     int exists = FALSE;
+    if (arg_number == ERROR) {
+        free_arguments(arguments, max_arguments);
+        return ERROR;
+    }
 
     switch(arg_number) {
         case 0:
@@ -169,6 +180,10 @@ int command_l(char line[], Route **routes, Stop *stops, int route_num,
     int add_end = FALSE; /*to check if we're adding to the end of the route*/
     int max_arguments = 5, route_index, size_1, size_2;
     int arg_number = parser(line, &args, max_arguments);
+    if (arg_number == ERROR) {
+        free_arguments(args, max_arguments);
+        return ERROR;
+    }
 
     if (!is_valid_connection(args, routes, stops, stop_num, route_num,
                              &route_index)) {
@@ -219,9 +234,10 @@ void command_i(Stop **stops, Route *routes,
         (*stops)[i] = add_routes_passing((*stops)[i], routes, route_num);
 
         if ((*stops)[i].routes_passing > 1) {
+            /*to add all indexes to the routes that go through this stop*/
             int *list_of_routes = malloc(sizeof(int) * route_num);
 
-            pos = add_route_to_list(list_of_routes, pos, route_num, 
+            pos = add_route_to_array(list_of_routes, pos, route_num, 
                                     i, stops, routes);
             bubble_sort(routes, list_of_routes, pos);
             print_routes_passing(pos, list_of_routes, (*stops)[i], routes);
@@ -236,16 +252,22 @@ void command_i(Stop **stops, Route *routes,
  * Description: function that handles the command r
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_r(char line[], Route **routes, int *route_num) {
+int command_r(char line[], Route **routes, int *route_num) {
 
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
     int route_index;
 
+    if (arg_number == ERROR) {
+        free_arguments(arguments, max_arguments);
+        return ERROR;
+    }
+
     route_index = find_route(arguments, routes, *route_num);
     if (route_index != NO_ROUTE)
         remove_route(routes, route_index, route_num);
     free_arguments(arguments, arg_number);
+    return TRUE;
 }
 
 /*------------------------------------------------------------------------------
@@ -253,12 +275,16 @@ void command_r(char line[], Route **routes, int *route_num) {
  * Description: function that handles the command e
  * Output: doesn't return anything
 ------------------------------------------------------------------------------*/
-void command_e(char line[], Stop **stops, int *stop_num, 
+int command_e(char line[], Stop **stops, int *stop_num, 
                Route **routes, int route_num) {
 
     char **arguments = NULL;
     int max_arguments = 1, arg_number = parser(line, &arguments, max_arguments);
     int stop_index = 0, exists = FALSE, i;
+    if (arg_number == ERROR) {
+        free_arguments(arguments, max_arguments);
+        return ERROR;
+    }
 
     for (i = 0; i < *stop_num; i++) {
         if (strcmp((*stops)[i].name, arguments[0]) == EQUAL) {
@@ -270,13 +296,14 @@ void command_e(char line[], Stop **stops, int *stop_num,
     if (!exists) {
         printf("%s: no such stop.\n", arguments[0]);
         free_arguments(arguments, arg_number);
-        return;
+        return TRUE;
     }
     for (i = 0; i < route_num; i++) {
         if ((*routes)[i].stops_number == 0) {
             continue;
         }
         else {
+            /*start by removing stops from the beginning*/
             while(strcmp((*routes)[i].first_stop, (*stops)[stop_index].name) == EQUAL) {
                 if (remove_from_beginning(routes, i) == NO_CONNECTIONS)
                     break;
@@ -286,6 +313,7 @@ void command_e(char line[], Stop **stops, int *stop_num,
             if ((*routes)[i].stops_number == 0) {
                 continue;
             }
+            /*if there are still stops left, check the end*/
             else {
                 while(strcmp((*routes)[i].last_stop, (*stops)[stop_index].name) == EQUAL) {
                     if (remove_from_end(routes, i) == NO_CONNECTIONS)
@@ -297,12 +325,14 @@ void command_e(char line[], Stop **stops, int *stop_num,
             if ((*routes)[i].stops_number == 0)
                 continue;
             else
+                /*if there are still stops left, check the ones in the middle*/
                 remove_from_middle(stops, routes, i, stop_index);
             get_stops_number(routes, i);
         }
     }
     remove_stop(stops, stop_index, stop_num);
     free_arguments(arguments, arg_number);
+    return TRUE;
 }
 
 /*------------------------------------------------------------------------------
@@ -356,10 +386,19 @@ void handle_commands(Stop *stops,
                 free_memory(stops, routes, ptr_stop, ptr_route);
                 break;
             case 'r':
-                command_r(line, &routes, ptr_route);
+                if (command_r(line, &routes, ptr_route) == ERROR) {
+                    free_memory(stops, routes, ptr_stop, ptr_route);
+                    printf("No memory.\n");
+                    exit(1);
+                }
                 break;
             case 'e':
-                command_e(line, &stops, ptr_stop, &routes, *route_num);
+                if (command_e(line, &stops, ptr_stop, &routes, 
+                              *route_num) == ERROR) {
+                    free_memory(stops, routes, ptr_stop, ptr_route);
+                    printf("No memory.\n");
+                    exit(1);
+                }
                 break;
         }
     }
