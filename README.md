@@ -1,12 +1,83 @@
-# Projecto 2 - IAED 2022/2023
+# Bus Network Management System
 
-## Enunciado
+## Overview
 
-O enunciado do projecto está disponível em [enunciado.md](enunciado.md). 
+This project is a bus network management system developed as part of the IAED (Algorithms and Data Structures) course. The system allows users to manage bus routes, stops, and connections through a command-line interface. The program supports various commands to add, remove, and list stops and routes, as well as to manage connections between stops.
 
-## Data de entrega: 14 de abril de 2023, às 19h59
+## Features
 
-Informações detalhadas sobre o processo de submissão estão disponíveis em [informacoes.md](informacoes.md).
+- **Stop Management**:
+  - Add new stops with names, latitude, and longitude.
+  - List all stops with their details.
+  - Remove existing stops and update the network accordingly.
+
+- **Route Management**:
+  - Create new bus routes.
+  - List all routes with their details.
+  - Remove existing routes.
+  - List stops in a route in both forward and reverse order.
+
+- **Connection Management**:
+  - Add connections between stops with cost and duration.
+  - Remove connections when stops are removed.
+  - Check for valid connections before adding them to the network.
+
+- **Intersection Management**:
+  - List all routes that pass through a specific stop.
+  - Sort routes alphabetically.
+
+- **Memory Management**:
+  - Efficient memory allocation and deallocation.
+  - Functions to free memory for stops, routes, and connections.
+
+## Commands
+
+The system supports the following commands:
+
+- **p**: Manage stops.
+  - `p` - List all stops.
+  - `p <stop_name>` - Show details of a specific stop.
+  - `p <stop_name> <latitude> <longitude>` - Add a new stop.
+
+- **c**: Manage routes.
+  - `c` - List all routes.
+  - `c <route_name>` - Create a new route or list stops in a route.
+  - `c <route_name> inverso` - List stops in a route in reverse order.
+
+- **l**: Manage connections.
+  - `l <route_name> <stop1> <stop2> <cost> <duration>` - Add a connection between two stops in a route.
+
+- **i**: List all routes that pass through each stop (intersection).
+
+- **r**: Remove a route.
+  - `r <route_name>` - Remove a specific route.
+
+- **e**: Remove a stop.
+  - `e <stop_name>` - Remove a specific stop and update all routes.
+
+- **q**: Quit the program.
+
+- **a**: Clear all data (stops and routes).
+
+## Data Structures
+
+- **Stop**: Represents a bus stop with a name, latitude, longitude, and the number of routes passing through it.
+- **Route**: Represents a bus route with a name, list of stops, cost, duration, and connections between stops.
+- **Connection**: Represents a connection between two stops with a route name, initial stop, final stop, cost, and duration.
+- **Linked List**: Used to manage connections between stops in a route.
+
+## Memory Management
+
+The program includes functions to handle dynamic memory allocation and deallocation for stops, routes, and connections. It ensures that memory is properly freed when stops or routes are removed, preventing memory leaks.
+
+
+## Project Description
+
+The project description is available in [enunciado.md](enunciado.md).
+
+## Submission Deadline: April 14, 2023, at 19:59
+
+Detailed information about the submission process is available in [informacoes.md](informacoes.md).
 
 
 
